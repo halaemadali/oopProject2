@@ -4,7 +4,7 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 
 import java.util.ArrayList;
-
+import java.util.List;
 public class Main {
     public static void main(String[] args) {
         RoomType t1 =new RoomType("single",1,200);
@@ -38,6 +38,11 @@ public class Main {
         System.out.println (r.gettype().getBasePrice());
         System.out.println (r.gettype().getCapacity());
         System.out.println (r.gettype().getNO3());
+
+
+//guest
+        List<Room> availableRooms = new ArrayList<>();
+        
 
     }
 }
