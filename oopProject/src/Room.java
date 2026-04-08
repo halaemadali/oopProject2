@@ -4,7 +4,7 @@ private RoomType type;
 private ArrayList<Amenity> amenities;
 private boolean isavailable ;
 private double price;
-    Room(){
+public Room(){
     
     }
   public boolean checkavailability (boolean isavailable)  
