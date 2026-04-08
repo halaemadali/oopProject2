@@ -1,4 +1,4 @@
-class Amenity {
+  public class Amenity {
     private String name;
 
     public Amenity(String name) {
@@ -7,5 +7,9 @@ class Amenity {
 
     public String getName() {
         return name;
+    }
+
+        public void setName( String name) {
+      this.name=name;
     }
 }
