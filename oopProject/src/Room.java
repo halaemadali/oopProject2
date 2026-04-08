@@ -11,11 +11,32 @@ public class Room {
     public Room(){
 
     }
-    public boolean checkavailability (boolean isavailable)
+    public RoomType gettype(){
+        return type ;
+    }
+    public void  settype(RoomType type){
+        this.type=type;
+
+    }
+    public int getroomnumber(){
+        return roomnumber ;
+    }
+    public void  setroomnumber(int roomnumber){
+        this.roomnumber=roomnumber;}
+    public boolean getisavailable(){
+        return isavailable ;
+    }
+    public void  setisavailable(boolean isavailable){
+        this.isavailable=isavailable;
+    }
+
+    public void checkavailability (boolean isavailable)
     { if (this.isavailable==true)
-        return true;
+        System.out.println("is available");
+
     else
-        return false;
+        System.out.println("is not available");
+
 
     }
     public ArrayList<Amenity> getAmenities() {
