@@ -1,15 +1,19 @@
-  public class Amenity {
-    private String name;
+public class Amenity {
+    private String amenity;
 
-    public Amenity(String name) {
-        this.name = name;
+    public Amenity(String amenity) {
+        this.amenity = amenity;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public String toString() {
+        return amenity; // أو return "Amenity Name: " + name;
     }
 
-        public void setName( String name) {
-      this.name=name;
+    public void setamenity( String amenity) {
+        this.amenity=amenity;
+    }
+    public String getAmenity() {
+        return this.amenity;
     }
 }
