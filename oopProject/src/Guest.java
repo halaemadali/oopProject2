@@ -1,1 +1,118 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+public class Guest {
 
+// Variables
+    private String username;
+    private String password;
+    private LocalDate dateOfBirth;
+    private double balance;
+    private String address;
+    private Gender gender;
+
+    private List<RoomType> roomPreferences;
+    private List<Reservation> reservations;
+
+
+
+   //Constructor
+    public Guest();
+    public Guest(String username, String password, LocalDate dateOfBirth,
+                 double balance, String address, Gender gender,
+                 List<RoomType> roomPreferences) {
+
+         this.username = username;
+        setPassword(password);//set for validation
+        setDateOfBirth(dateOfBirth);
+        setBalance(balance);
+        this.address = address;
+        this.gender = gender;
+        this.roomPreferences = roomPreferences != null ? roomPreferences : new ArrayList<>();
+        this.reservations = new ArrayList<>();
+    }
+
+
+
+  
+   // Getters & Setters 
+
+    public String getUsername() {
+        return username;
+    }
+
+  
+
+
+public void setUsername(String username) {
+
+    if (username == null) {
+        System.out.println("Username is null");
+    } 
+    else if (username.equals("")) {
+        System.out.println("Username is empty");
+    } 
+    else {
+        this.username = username;
+    }
+}
+
+  
+
+  
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+
+    if (password == null) {
+        System.out.println("Password is null");
+    } 
+    else if (password.length() < 6) {
+        System.out.println("Password must be at least 6 characters");
+    } 
+    else {
+        this.password = password;
+    }
+}
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+   
+      if (dateOfBirth == null) {
+          System.out.println("Date Of Birth is null");
+        }
+     else{ this.dateOfBirth = dateOfBirth;}
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        if (balance < 0) {
+          System.out.println("Balance cannot be negative");
+         
+        }
+      else{  this.balance = balance;}
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+ //methodes
+
+       //register
+       //login
+       //View Available Rooms
+  public List<Room> viewAvailableRooms(){
+
+    
+  }
+  
+}
