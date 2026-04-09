@@ -3,6 +3,14 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 
+
+package com.mycompany.main;
+
+
+
+
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 public class Main {
@@ -40,9 +48,46 @@ public class Main {
         System.out.println (r.gettype().getNO3());
 
 
-//guest
-        List<Room> availableRooms = new ArrayList<>();
+
+
+    
+
+    // Guest
+    Guest g1 = new Guest();
+    g1.setUsername("mariam");
+    g1.setPassword("123456");
+    g1.setBalance(1000);
+
+    g1.register();
+
+    // Login
+    Guest loggedIn = Guest.login("mariam", "123456");
+
+    // View Rooms
+    
+
+r1.setroomnumber(101);
+r1.settype(t1);
+r1.setisavailable(true);
+    
+    
+    
+    HotelDatabase.rooms.add(r1);
+    List<Room> available = g1.viewAvailableRooms();
+    for (Room room : available) {
+    System.out.println("Available Room: " + room.getroomnumber());
+}
+}
+        
+        
+        
+        
+        
+        
+        
         
 
+
     }
-}
+
+
