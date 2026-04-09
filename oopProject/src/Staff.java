@@ -19,6 +19,75 @@ public abstract class Staff {
       
     }
 
-  
+    
+
+   //Getters
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public int getWorkingHours() {
+        return workingHours;
+    }
+
+    
+
+    //Setters
+    public void setUsername(String username) {
+
+        if (username == null || username.isEmpty()) {
+            System.out.println("username cannot be empty");
+            return;
+        }
+            this.username = username;
+
+    }
+
+    public void setPassword(String password) {
+        if (password == null || password.trim().isEmpty()) {
+            System.out.println("INVALID PASSWORD");
+            return;
+        } else if (password.length() < 6) {
+            System.out.println("PASSWORD MUST BE AT LEAST 6 CHARACTERS");
+            return;
+        } else {
+            this.password = password;
+        }
+    }
+    
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+
+        if (dateOfBirth == null) {
+            System.out.println("INVALID DATE OF BIRTH");
+            return;
+        }
+        this.dateOfBirth = dateOfBirth;
+
+    }
+
+    public void setWorkingHours(int workingHours) {
+        if(workingHours <= 0){
+            System.out.print("INVALID WORKING HOURS");
+            return;
+        }
+
+        this.workingHours = workingHours;
+    }
+
+
+    
+
 
   
