@@ -20,6 +20,8 @@ public class Invoice implements Payable {
 
     }
 
+   
+
     //setters and getters
     public int getID() {
         return ID;
@@ -73,7 +75,7 @@ public class Invoice implements Payable {
     private double calculateTotal(){
         if (reservation == null || reservation.getRoom() == null)
             return 0;
-        double total = (reservation.getDuration()) * (reservation.getRoom().getPrice());
+        double total = (reservation.getDuration()) * (reservation.getRoom().getprice());
         return total;
     }
 
