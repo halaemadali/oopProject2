@@ -17,9 +17,9 @@ public class Guest {
     private Gender gender;
 
     private List<RoomType> roomPreferences;
-    private List<Reservation> reservations;
+    
     private List<Room> availableRooms;
-
+private List<Reservation> reservations = new ArrayList<>();
 
 
    //Constructor
@@ -168,12 +168,50 @@ public void setUsername(String username) {
    }
 
     //make Reservation
-    public void makeReservation(Room room){
+    public void makeReservation(Reservation r){
     
-    
-    
+    if (r==null){
+     System.out.println("Invalid reservation");
+        return; 
+    }
+    reservations.add(r);
+    HotelDatabase.reservations.add(r);
+     System.out.println("Reservation added successfully!");
     
     }
+
+    
+//cancle reservation
+public void cancelReservation(Reservation r) {
+
+    if (r == null) {
+        System.out.println("Invalid reservation");
+        return;
+    }
+
+    r.cancel();
+}
+
+//view reservation
+public void viewReservations() {
+
+    for (Reservation r : reservations) {
+        System.out.println("Room: " + r.getRoom().getroomnumber());
+    }
+}
+
+//checkout
+public void checkout() {
+
+    for (Reservation r : reservations) {
+        r.complete();
+    }
+}
+    
+  }
+  
+
+
 
     
 
