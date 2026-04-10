@@ -8,7 +8,14 @@ public class Room {
     private double price;
 
     public Room(){
-
+ public double getprice(){
+        return price ;
+    }
+    public void  setprice(double price){
+        if (price>0)
+        this.price=price;
+        
+    }
     }
     public RoomType gettype(){
         return type ;
