@@ -4,7 +4,6 @@ public class Room {
     private int roomnumber;
     private RoomType type;
    public ArrayList<Amenity> amenities=new ArrayList<>();
-
     private boolean isavailable ;
     private double price;
 
@@ -22,7 +21,20 @@ public class Room {
         return roomnumber ;
     }
     public void  setroomnumber(int roomnumber){
-        this.roomnumber=roomnumber;}
+        this.roomnumber=roomnumber;
+    }
+
+public double getPrice ()
+    {
+    return price ;
+    }
+
+public void setPrice(double price)
+    {
+    this.price=price;
+    }
+    
+
     public boolean getisavailable(){
         return isavailable ;
     }
