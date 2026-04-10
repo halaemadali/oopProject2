@@ -129,9 +129,22 @@ public abstract class Staff {
 
       // Prints all reservations in the system
      public void viewAllReservations() {
-        for (Reservation res : HotelDatabase.reservations) {
-            
-        }
+      System.out.println("=========== View All Reservations ===========");
+
+            for (Reservation r : HotelDatabase.reservations) {
+
+                System.out.println("Reservation ID: " + r.getID());
+                System.out.println("Guest username: " +r.getGuest().getUsername() );
+                System.out.println("Room Number: " + r.getRoom().getroomnumber());
+                System.out.println("Checkin: " + r.getCheckin());
+                System.out.println("Checkout: " + r.getCheckout());
+                System.out.println("Status: " + r.getStatus());
+                System.out.println("Duration : " + r.getDuration());
+
+                System.out.println("-------------------------------------------");
+
+
+            }
     }
     
 
