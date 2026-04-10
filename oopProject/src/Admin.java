@@ -12,25 +12,9 @@ public class Admin extends Staff {
        //add room
      public void addRoom(Room room){
 
-         for(Room r: HotelDatabase.rooms){
-             if(r.getroomnumber()== room.getroomnumber()){
-                 System.out.println(" Room already exists");
-                 return;
-             }
-         }
-
-        HotelDatabase.rooms.add(room);
-        System.out.println("Room added successfully");
      }
 
-       
-     //view rooms
-    public void viewRooms(){
-
-         for(Room r: HotelDatabase.rooms){
-             System.out.println(r);
-         }
-     }
+  
 
      //update room
      public void updateRoom(){
