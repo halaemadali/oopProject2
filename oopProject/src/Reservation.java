@@ -1,7 +1,139 @@
-
-import java.time.LocalDate;
+import java.util.Date;
 
 public class Reservation {
+    private int ID;
+    private Room room;
+    private Guest guest;
+    private Date checkin;
+    private Date checkout;
+    private ReservationStatus status;
+    private Invoice invoice;
 
-   
+    // constructors
+    public Reservation(){
+
+    }
+    public Reservation(int id, Room r, Guest g, Date in, Date out, ReservationStatus status) throws Exception{
+        this.ID = id;
+        setRoom(r);
+        this.guest =g;
+        setCheckin(in);
+        setCheckout(out);
+        validateRange(in, out);
+        setStatus(status);
+        // automatic or not?
+        generateInvoice();
+
+    }
+
+    //setters and getters
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+
+    public void setRoom(Room room) throws Exception {
+        if (room.getisavailable()== false)
+            throw new RoomNotAvailableException("Room is already booked.");
+        this.room = room;
+    }
+
+    public void setCheckin(Date checkin) {
+        validateDate(checkin);
+        if(this.checkout != null)
+            validateRange(checkin, this.checkout);
+        this.checkin = checkin;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public Date getCheckin() {
+        return checkin;
+    }
+
+    public Date getCheckout() {
+        return checkout;
+    }
+
+    public void setCheckout(Date checkout) {
+        validateDate(checkout);
+        if(this.checkin != null)
+            validateRange(this.checkin, checkout);
+        this.checkout = checkout;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+        if (this.status == ReservationStatus.CONFIRMED)
+            this.room.setisavailable(false);
+        if(this.status == ReservationStatus.CANCELLED || this.status == ReservationStatus.COMPLETED )
+            this.room.setisavailable(true);
+    }
+
+    //methods
+
+    //calculating length of duration (no. of days)
+    public int getDuration(){
+        if (checkout == null || checkin == null) return 0;
+        long milliseconds = checkout.getTime() - checkin.getTime();
+        long days = java.util.concurrent.TimeUnit.MILLISECONDS.toDays(milliseconds);
+        if ((int)days == 0) days++;
+        return (int)days;
+    }
+
+    // validates date entry
+    private void validateDate(Date d){
+        if (d == null) {
+            throw new IllegalArgumentException("Selected date cannot be null");
+        }
+        Date now = new Date();
+        if (d.before(now))
+            throw new IllegalArgumentException("Selected Date is before current date.");
+    }
+
+    //checks whether the check out is after check in or not
+    private void validateRange(Date in, Date out){
+        if(out.before(in))
+            throw new IllegalArgumentException("The check out date cannot be before check in date.");
+    }
+
+    //confirming reservation
+    public void confirm(){
+        setStatus(ReservationStatus.CONFIRMED);
+    }
+
+    //cancelling reservation
+    public void cancel(){
+        setStatus(ReservationStatus.CANCELLED);
+    }
+
+    // completing reservation
+    public void complete(){
+        setStatus(ReservationStatus.COMPLETED);
+    }
+
+    //generating invoice for reservation
+    public void generateInvoice(){
+        if (this.invoice != null)
+            throw new IllegalStateException("An invoice is already created for this reservation.");
+        invoice = new Invoice(this);
+    }
+
 }
