@@ -91,34 +91,50 @@ public abstract class Staff {
       
       //Prints all guests in the system
        public void viewAllGuests(){
+     System.out.println("============== View All Guests ============");
         for(Guest g : HotelDatabase.guests) {
-            System.out.println(g);
+
+           System.out.println("Username: " + g.getUsername());
+           System.out.println("password: " + g.getPassword());
+            System.out.println("Date of Birth: " + g.getDateOfBirth() );
+            System.out.println("Balance: " + g.getBalance());
+
+            System.out.println("---------------------------------------");
+
         }
     }
 
     
     // Prints all rooms in the system
      public void viewAllRooms() {
-        for (Room r : HotelDatabase.rooms){
-            System.out.println(r);
-         }
+
+        System.out.println("============== View All Rooms ============");
+        for (Room r : HotelDatabase.rooms) {
+
+            System.out.println("Room Number: " + r.getroomnumber());
+            System.out.println("Price: " + r.getPrice());
+            System.out.println("Available: " + r.getisavailable());
+
+            // RoomType details
+            System.out.println("NO3: " + r.gettype().getNO3());
+            System.out.println("Capacity: " + r.gettype().getCapacity());
+            System.out.println("Base Price: " + r.gettype().getBasePrice());
+            System.out.println("Amenities: " + r.getAmenities());
+
+            System.out.println("---------------------------------------");
+
+        }
     }
     
 
       // Prints all reservations in the system
      public void viewAllReservations() {
         for (Reservation res : HotelDatabase.reservations) {
-            System.out.println(res);
+            
         }
     }
     
 
-  //Returns a string representation of the Staff member
-     @Override
-    public String toString(){
-        return "username: "+ username + " ,Role" + role + " ,Working Hours " + workingHours ;
-
-    }
 
 
 
