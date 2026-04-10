@@ -58,11 +58,16 @@ public abstract class Staff {
     public void setPassword(String password) {
         if (password == null || password.trim().isEmpty()) {
             System.out.println("INVALID PASSWORD");
-            
-        } else if (password.length() < 6) {
+        }            
+         else if (password.length() < 6) {
             System.out.println("PASSWORD MUST BE AT LEAST 6 CHARACTERS");
+        } 
             
-        } else {
+         else if (password.contains(" ")) {
+            System.out.println("PASSWORD CANNOT CONTAIN SPACES");
+         }
+             
+        else {
             this.password = password;
         }
     }
