@@ -100,7 +100,6 @@ public abstract class Staff {
         for(Guest g : HotelDatabase.guests) {
 
            System.out.println("Username: " + g.getUsername());
-           System.out.println("password: " + g.getPassword());
             System.out.println("Date of Birth: " + g.getDateOfBirth() );
             System.out.println("Balance: " + g.getBalance());
 
