@@ -96,6 +96,10 @@ public abstract class Staff {
       
       //Prints all guests in the system
        public void viewAllGuests(){
+            if (HotelDatabase.guests.isEmpty()) {
+         System.out.println("No guests found");
+         return;
+     }
      System.out.println("============== View All Guests ============");
         for(Guest g : HotelDatabase.guests) {
 
@@ -133,6 +137,11 @@ public abstract class Staff {
 
       // Prints all reservations in the system
      public void viewAllReservations() {
+         
+          if (HotelDatabase.reservations.isEmpty()) {
+                System.out.println("No reservations found");
+                return;
+            }
       System.out.println("=========== View All Reservations ===========");
 
             for (Reservation r : HotelDatabase.reservations) {
