@@ -91,6 +91,12 @@ public class Admin extends Staff {
         System.out.println("Room not found");
 
     }
+
+
+     //Add Room Type
+    public void addRoomType(){
+         
+    }
      
 
       //view Room Type
