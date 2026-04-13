@@ -8,13 +8,15 @@ public class Reservation {
     private Date checkout;
     private ReservationStatus status;
     private Invoice invoice;
+    private static int numofreservations = 0;
 
     // constructors
     public Reservation(){
+        numofreservations ++;
 
     }
-    public Reservation(int id, Room r, Guest g, Date in, Date out, ReservationStatus status) throws Exception{
-        this.ID = id;
+    public Reservation( Room r, Guest g, Date in, Date out, ReservationStatus status) throws Exception{
+        this.ID = numofreservations ;
         setRoom(r);
         this.guest =g;
         setCheckin(in);
@@ -23,6 +25,7 @@ public class Reservation {
         setStatus(status);
         // automatic or not?
         generateInvoice();
+        numofreservations++;
 
     }
 
