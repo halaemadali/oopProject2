@@ -31,9 +31,9 @@ private List<Reservation> reservations ;
    
     public Guest(String username, String password, LocalDate dateOfBirth,
                  double balance, String address, Gender gender,
-                 List<RoomType> roomPreferences) {
+                 List<RoomType> roomPreferences)throws InvalidUsernameException  {
 
-         this.username = username;
+         setUsername(username);
         setPassword(password);//set for validation
         setDateOfBirth(dateOfBirth);
         setBalance(balance);
@@ -56,13 +56,13 @@ private List<Reservation> reservations ;
   
 
 
-public void setUsername(String username) {
+public void setUsername(String username) throws InvalidUsernameException {
 
     if (username == null) {
-        System.out.println("Username is null");
+        throw new InvalidUsernameException("Username cannot be null");
     } 
-    else if (username.equals("")) {
-        System.out.println("Username is empty");
+    else if (username.trim().isEmpty()) {
+        throw new InvalidUsernameException("Username cannot be empty");
     } 
     else {
         this.username = username;
@@ -158,10 +158,12 @@ public void setUsername(String username) {
   public List<Room> viewAvailableRooms(){
         availableRooms.clear();
     for (Room room : HotelDatabase.rooms) {
-        if (room.getisavailable()) {   
-            availableRooms.add(room);
-        }
+    if ((roomPreferences == null || roomPreferences.contains(room.gettype()))
+        && room.getisavailable()) {
+        
+        availableRooms.add(room);
     }
+}
 
     return availableRooms;
        
@@ -174,8 +176,8 @@ public void setUsername(String username) {
      System.out.println("Invalid reservation");
         return; 
     }
-    reservations.add(r);
-    HotelDatabase.reservations.add(r);
+    reservations.add(r);//list of the guest
+    HotelDatabase.reservations.add(r);//global
      System.out.println("Reservation added successfully!");
     
     }
@@ -212,12 +214,15 @@ public void checkout() {
   
 
 
+  
+
+
 
     
 
 
     
-  }
+  
   
 
 
