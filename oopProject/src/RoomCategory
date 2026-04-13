@@ -1,0 +1,6 @@
+enum RoomCategory{
+single , double,suite ;  
+
+
+
+}
