@@ -45,52 +45,51 @@ public abstract class Staff {
     
 
     //Setters
-    public void setUsername(String username) {
+     public void setUsername(String username) {
 
-        if (username == null || username.isEmpty()) {
-            System.out.println("username cannot be empty");
-            
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
         }
-            this.username = username;
 
+        this.username = username;
     }
 
-    public void setPassword(String password) {
+    
+
+      public void setPassword(String password) {
+
         if (password == null || password.trim().isEmpty()) {
-            System.out.println("INVALID PASSWORD");
-        }            
-         else if (password.length() < 6) {
-            System.out.println("PASSWORD MUST BE AT LEAST 6 CHARACTERS");
-        } 
-            
-         else if (password.contains(" ")) {
-            System.out.println("PASSWORD CANNOT CONTAIN SPACES");
-         }
-             
-        else {
-            this.password = password;
+            throw new IllegalArgumentException("Password cannot be empty");
         }
+
+        if (password.length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters");
+        }
+
+        if (password.contains(" ")) {
+            throw new IllegalArgumentException("Password cannot contain spaces");
+        }
+
+        this.password = password;
+    }
+
+
+
+
+   public void setDateOfBirth(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            throw new IllegalArgumentException("Invalid date of birth");
+        }
+       
+        this.dateOfBirth = dateOfBirth;
     }
     
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    
+     public void setWorkingHours(int workingHours) {
+        if (workingHours < 0) {
+            throw new IllegalArgumentException("INVALID WORKING HOURS");
 
-        if (dateOfBirth == null) {
-            System.out.println("INVALID DATE OF BIRTH");
-        
         }
-        this.dateOfBirth = dateOfBirth;
-
-    }
-
-    public void setWorkingHours(int workingHours) {
-        if(workingHours <= 0){
-            System.out.print("INVALID WORKING HOURS");
-            
-        }
-
-        this.workingHours = workingHours;
-    }
-
 
           //Common Behaviors
       
@@ -99,7 +98,7 @@ public abstract class Staff {
             if (HotelDatabase.guests.isEmpty()) {
          System.out.println("No guests found");
          return;
-     }
+       }  
      System.out.println("============== View All Guests ============");
         for(Guest g : HotelDatabase.guests) {
 
