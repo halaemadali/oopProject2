@@ -11,11 +11,11 @@ public abstract class Staff {
       //Constructor
     public Staff(String username, String password, LocalDate dateOfBirth, Role role, int workingHours) {
 
-        this.username = username;
-        this.password = password;
-        this.dateOfBirth = dateOfBirth;
+        setUsername(username);
+        setPassword(password);
+        setDateOfBirth(dateOfBirth);
         this.role = role;
-        this.workingHours = workingHours;
+        setWorkingHours(workingHours);
       
     }
 
