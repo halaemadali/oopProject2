@@ -1,6 +1,5 @@
-enum RoomCategory{
+package com.mycompany.main;
+public enum RoomCategory{
 single , double,suite ;  
-
-
 
 }
