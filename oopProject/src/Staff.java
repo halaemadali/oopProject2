@@ -1,3 +1,4 @@
+
 import java.time.LocalDate;
 
 public abstract class Staff {
@@ -8,7 +9,8 @@ public abstract class Staff {
     private Role role;  //ADMIN or RECEPTIONIST
     private int workingHours;
 
-      //Constructor
+
+    //Constructor
     public Staff(String username, String password, LocalDate dateOfBirth, Role role, int workingHours) {
 
         setUsername(username);
@@ -16,12 +18,11 @@ public abstract class Staff {
         setDateOfBirth(dateOfBirth);
         this.role = role;
         setWorkingHours(workingHours);
-      
+
     }
 
-    
 
-   //Getters
+    //Getters
     public String getUsername() {
         return username;
     }
@@ -42,10 +43,10 @@ public abstract class Staff {
         return workingHours;
     }
 
-    
 
     //Setters
-     public void setUsername(String username) {
+
+    public void setUsername(String username) {
 
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty");
@@ -54,9 +55,8 @@ public abstract class Staff {
         this.username = username;
     }
 
-    
 
-      public void setPassword(String password) {
+    public void setPassword(String password) {
 
         if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty");
@@ -75,34 +75,38 @@ public abstract class Staff {
 
 
 
+    public void setDateOfBirth(LocalDate dateOfBirth) {
 
-   public void setDateOfBirth(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
             throw new IllegalArgumentException("Invalid date of birth");
         }
-       
+
         this.dateOfBirth = dateOfBirth;
     }
-    
-    
-     public void setWorkingHours(int workingHours) {
+
+
+
+    public void setWorkingHours(int workingHours){
         if (workingHours < 0) {
             throw new IllegalArgumentException("INVALID WORKING HOURS");
 
         }
 
-          //Common Behaviors
-      
-      //Prints all guests in the system
-       public void viewAllGuests(){
-            if (HotelDatabase.guests.isEmpty()) {
+        this.workingHours = workingHours;
+    }
+
+
+
+ public void viewAllGuests(){
+
+     if (HotelDatabase.guests.isEmpty()) {
          System.out.println("No guests found");
          return;
-       }  
+     }
      System.out.println("============== View All Guests ============");
         for(Guest g : HotelDatabase.guests) {
 
-           System.out.println("Username: " + g.getUsername());
+            System.out.println("Username: " + g.getUsername());
             System.out.println("Date of Birth: " + g.getDateOfBirth() );
             System.out.println("Balance: " + g.getBalance());
 
@@ -111,43 +115,42 @@ public abstract class Staff {
         }
     }
 
-    
-    // Prints all rooms in the system
-     public void viewAllRooms() {
+    public void viewAllRooms() {
 
         System.out.println("============== View All Rooms ============");
         for (Room r : HotelDatabase.rooms) {
 
-            System.out.println("Room Number: " + r.getroomnumber());
+            System.out.println("Room Number: " + r.getRoomNumber());
             System.out.println("Price: " + r.getPrice());
-            System.out.println("Available: " + r.getisavailable());
+            System.out.println("Available: " + r.isAvailable());
 
             // RoomType details
-            System.out.println("NO3: " + r.gettype().getNO3());
-            System.out.println("Capacity: " + r.gettype().getCapacity());
-            System.out.println("Base Price: " + r.gettype().getBasePrice());
+            System.out.println("NO3: " + r.getType().getRoomCategory());
+            System.out.println("Capacity: " + r.getType().getCapacity());
+            System.out.println("Base Price: " + r.getType().getBasePrice());
             System.out.println("Amenities: " + r.getAmenities());
+         
 
             System.out.println("---------------------------------------");
 
         }
     }
-    
 
-      // Prints all reservations in the system
-     public void viewAllReservations() {
-         
-          if (HotelDatabase.reservations.isEmpty()) {
+    // Prints all reservations in the system
+        public void viewAllReservations() {
+
+            if (HotelDatabase.reservations.isEmpty()) {
                 System.out.println("No reservations found");
                 return;
             }
-      System.out.println("=========== View All Reservations ===========");
+
+            System.out.println("=========== View All Reservations ===========");
 
             for (Reservation r : HotelDatabase.reservations) {
 
                 System.out.println("Reservation ID: " + r.getID());
                 System.out.println("Guest username: " +r.getGuest().getUsername() );
-                System.out.println("Room Number: " + r.getRoom().getroomnumber());
+                System.out.println("Room Number: " + r.getRoom().getRoomNumber());
                 System.out.println("Checkin: " + r.getCheckin());
                 System.out.println("Checkout: " + r.getCheckout());
                 System.out.println("Status: " + r.getStatus());
@@ -157,15 +160,9 @@ public abstract class Staff {
 
 
             }
-    }
-    
+        }
 
 
 
 
 }
-
-    
-
-
-  
