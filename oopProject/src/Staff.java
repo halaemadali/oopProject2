@@ -133,7 +133,7 @@ public abstract class Staff {
             System.out.println("Amenities:");
             if (r.getAmenities() != null && !r.getAmenities().isEmpty()) {
                 for (Amenity a : r.getAmenities()) {
-                    System.out.println("- " +a.getQuantity()+" "+ a.getName() + "  Price: " + a.getTotalPrice());
+                    System.out.println("- "+ a.getName() + "  Price: " + a.getPrice());
                 }
             } else {
                 System.out.println("No amenities available");
