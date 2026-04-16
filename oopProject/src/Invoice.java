@@ -72,11 +72,31 @@ public class Invoice implements Payable {
 
     }
 
-    private double calculateTotal(){
+    public double calculateTotal(){
         if (reservation == null || reservation.getRoom() == null)
             return 0;
-        double total = (reservation.getDuration()) * (reservation.getRoom().getprice());
+        double total = (reservation.getDuration()) * (reservation.getRoom().getPrice());
         return total;
+    }
+    @Override
+    public String toString() {
+        return "Invoice{" +
+                "ID=" + ID +
+                ", reservation=" + (reservation != null ? reservation : "null") +
+                ", amount=" + amount +
+                ", date=" + (date != null ? date : "null") +
+                ", isPaid=" + isPaid +
+                ", method=" + (method != null ? method : "null") +
+                '}';
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Invoice other = (Invoice) obj;
+
+        return this.ID == other.ID;
     }
 
 
