@@ -20,7 +20,7 @@ public class Invoice implements Payable {
 
     }
 
-   
+
 
     //setters and getters
     public int getID() {
