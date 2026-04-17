@@ -27,15 +27,38 @@ public Admin(){
 
 
     //view room
-    public void viewRoom(int roomNumber) {
+     public void viewRoom(int roomNumber) {
         for (Room r : HotelDatabase.rooms) {
             if (r.getRoomNumber() == roomNumber) {
 
+                System.out.println("\n============ View Room ==========");
 
+                System.out.println("Room Number: " + r.getRoomNumber());
+                System.out.println("Price: " + r.getPrice());
+                System.out.println("Available: " + r.isAvailable());
+
+                // RoomType details
+                System.out.println("Room Type: ");
+                System.out.println("-Room Type Id: "+ r.getType().getRoomTypeId());
+                System.out.println("   -Room Category: " + r.getType().getRoomCategory());
+                System.out.println("   -Capacity: " + r.getType().getCapacity());
+                System.out.println("   -Base Price: " + r.getType().getBasePrice());
+
+                System.out.println("Amenities:");
+                if (r.getAmenities() != null && !r.getAmenities().isEmpty()) {
+                    for (Amenity a : r.getAmenities()) {
+                        System.out.println("   - "+ a.getName() + "  Price: " + a.getPrice());
+                    }
+                } else {
+                    System.out.println("No amenities available");
+                }
+                System.out.print("==============================\n");
+                return;
             }
         }
         System.out.println("Room not found");
     }
+
 
 
     //update room
