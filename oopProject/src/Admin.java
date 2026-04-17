@@ -1,17 +1,18 @@
 import java.time.LocalDate;
-
 public class Admin extends Staff {
 
     public Admin(String username, String password, LocalDate dateOfBirth, int workingHours) {
         super(username, password, dateOfBirth, Role.ADMIN, workingHours);
 
     }
-
+public Admin(){
+    super();
+}
 
     //add room
     public void addRoom(int roomNumber, double price, boolean isAvailable, RoomCategory roomcategory, int capacity, double basePrice, int roomTypeId) {
 
-        RoomType type = new RoomType(roomTypeId, roomcategory, capacity, basePrice);
+        RoomType type = new RoomType(roomcategory, capacity, roomTypeId);
 
         Room newRoom = new Room();
         newRoom.setRoomNumber(roomNumber);
@@ -44,11 +45,10 @@ public class Admin extends Staff {
 
                 r.setPrice(newPrice);
                 r.setAvailable(isAvailable);
-
-                r.getType().setRoomTypeId(roomTypeId);
+                r.getType().setroomTypeId(roomTypeId);
                 r.getType().setRoomCategory(roomcategory);
                 r.getType().setCapacity(capacity);
-                r.getType().setBasePrice(basePrice);
+                r.getType().getRoomCategory().setBasePrice(basePrice);
 
 
                 System.out.println("Room updated successfully");
@@ -73,92 +73,6 @@ public class Admin extends Staff {
 
         System.out.println("Room not found");
 
-    }
-
-
-
-
-    
-//Add Room Type
-    public void addRoomType(int roomTypeId, RoomCategory roomcategory, int capacity, double basePrice) {
-
-        RoomType type = new RoomType(roomTypeId, roomcategory, capacity, basePrice);
-
-        HotelDatabase.roomTypes.add(type);
-
-        System.out.println("RoomType added successfully!");
-    }
-
-
-    //view Room Type
-    public void viewRoomType(int roomTypeId) {
-
-        System.out.println("\n===== ROOM TYPE =====");
-
-        for (RoomType t : HotelDatabase.roomTypes) {
-            System.out.println("Room Type id: " + t.getRoomTypeId());
-            System.out.println("Type: " + t.getRoomCategory());
-            System.out.println("Capacity: " + t.getCapacity());
-            System.out.println("Base Price: " + t.getBasePrice());
-        }
-        System.out.println("=====================\n");
-    }
-
-
-
-    // view all room types
-    public void viewAllRoomTypes() {
-
-        if (HotelDatabase.roomTypes.isEmpty()) {
-            System.out.println("No Room Types found");
-            return;
-        }
-
-        System.out.println("\n===== ALL ROOM TYPES =====");
-
-        for (RoomType t : HotelDatabase.roomTypes) {
-
-            System.out.println("Room Type id: " + t.getRoomTypeId());
-            System.out.println("Type: " + t.getRoomCategory());
-            System.out.println("Capacity: " + t.getCapacity());
-            System.out.println("Base Price: " + t.getBasePrice());
-            System.out.println("----------------------");
-        }
-    }
-
-
-    // Update room type
-    public void updateRoomType(int roomTypeId, RoomCategory newRoomcategory ,int newCapacity, double newBasePrice) {
-
-        for (RoomType t : HotelDatabase.roomTypes) {
-
-            if (t.getRoomTypeId()== roomTypeId) {
-
-                t.setRoomCategory(newRoomcategory);
-                t.setCapacity(newCapacity);
-                t.setBasePrice(newBasePrice);
-
-                System.out.println("RoomType updated successfully");
-                return;
-            }
-        }
-
-        System.out.println("RoomType not found");
-    }
-
-
-    // Delete room type
-   public void deleteRoomType(int roomTypeId) {
-        for (int i = 0; i < HotelDatabase.roomTypes.size(); i++) {
-            if (HotelDatabase.roomTypes.get(i).getRoomTypeId()  == roomTypeId) {
-
-                HotelDatabase.roomTypes.remove(i);
-                System.out.println("RoomType deleted successfully");
-                return;
-            }
-        }
-
-        System.out.println("RoomType not found");
     }
 
 
@@ -231,7 +145,7 @@ public class Admin extends Staff {
                 for (Amenity a : r.getAmenities()) {
                     System.out.println("- " + a.getQuantity() + "\t"+ a.getName() + "\tprice: " + a.getTotalPrice() );
                 }
-                 System.out.println("\n");
+                System.out.println("\n");
                 return;
             }
         }
@@ -328,5 +242,3 @@ public class Admin extends Staff {
     }
 
 }
-
-
