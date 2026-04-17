@@ -1,4 +1,3 @@
-package com.mycompany.ppppp;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,7 @@ public class Room {
         setPrice(price);
     }
 
-    
+
     public RoomType getType() {
         return type;
     }
@@ -36,13 +35,13 @@ public class Room {
         }
         this.type = type;
 
-       
-        if (this.price != 0 && this.price < type.getBasePrice()) {
+
+        if (this.price != 0 && this.price < RoomCategory.getBasePrice()) {
             throw new IllegalArgumentException("Price cannot be less than base price of room type");
         }
     }
 
-  
+
     public int getRoomNumber() {
         return roomNumber;
     }
@@ -59,7 +58,7 @@ public class Room {
         this.roomNumber = roomNumber;
     }
 
-    
+
     public double getPrice() {
         return price;
     }
@@ -77,15 +76,15 @@ public class Room {
             throw new IllegalArgumentException("Price exceeds maximum allowed");
         }
 
-        if (type != null && price < type.getBasePrice()) {
+        if (type != null && price < RoomCategory.getBasePrice()) {
             throw new IllegalArgumentException("Price cannot be less than base price of room type");
         }
 
         this.price = price;
     }
 
-   
-    public boolean isAvailable() {
+
+    public boolean getisavailable() {
         return isAvailable;
     }
 
@@ -101,7 +100,7 @@ public class Room {
         }
     }
 
-   
+
     public ArrayList<Amenity> getAmenities() {
         return new ArrayList<>(amenities); // return copy (encapsulation)
     }
@@ -136,13 +135,13 @@ public class Room {
         System.out.println("Amenity removed successfully!");
     }
 
-    
+
     public void validateRoom() {
         if (type == null) {
             throw new IllegalStateException("Room type is not set");
         }
 
-        if (price < type.getBasePrice()) {
+        if (price < RoomCategory.getBasePrice()) {
             throw new IllegalStateException("Invalid price: less than base price");
         }
 
@@ -151,7 +150,7 @@ public class Room {
         }
     }
 
-   
+
     @Override
     public String toString() {
         return "Room{" +
