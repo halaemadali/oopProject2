@@ -99,6 +99,93 @@ public Admin(){
     }
 
 
+ //Add Room Type
+    public void addRoomType(int roomTypeId, RoomCategory roomcategory, int capacity, double basePrice) {
+
+        RoomType type = new RoomType(roomTypeId, roomcategory, capacity, basePrice);
+
+        HotelDatabase.roomTypes.add(type);
+
+        System.out.println("RoomType added successfully!");
+    }
+
+
+    //view Room Type
+    public void viewRoomType(int roomTypeId) {
+
+        System.out.println("\n===== ROOM TYPE =====");
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+            System.out.println("Room Type id: " + t.getRoomTypeId());
+            System.out.println("Type: " + t.getRoomCategory());
+            System.out.println("Capacity: " + t.getCapacity());
+            System.out.println("Base Price: " + t.getBasePrice());
+        }
+        System.out.println("=====================\n");
+    }
+
+
+
+    // view all room types
+    public void viewAllRoomTypes() {
+
+        if (HotelDatabase.roomTypes.isEmpty()) {
+            System.out.println("No Room Types found");
+            return;
+        }
+
+        System.out.println("\n===== ALL ROOM TYPES =====");
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            System.out.println("Room Type id: " + t.getRoomTypeId());
+            System.out.println("Type: " + t.getRoomCategory());
+            System.out.println("Capacity: " + t.getCapacity());
+            System.out.println("Base Price: " + t.getBasePrice());
+            System.out.println("----------------------");
+        }
+    }
+
+
+    // Update room type
+    public void updateRoomType(int roomTypeId, RoomCategory newRoomcategory ,int newCapacity, double newBasePrice) {
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            if (t.getRoomTypeId()== roomTypeId) {
+
+                t.setRoomCategory(newRoomcategory);
+                t.setCapacity(newCapacity);
+                t.setBasePrice(newBasePrice);
+
+                System.out.println("RoomType updated successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
+
+    // Delete room type
+   public void deleteRoomType(int roomTypeId) {
+        for (int i = 0; i < HotelDatabase.roomTypes.size(); i++) {
+            if (HotelDatabase.roomTypes.get(i).getRoomTypeId()  == roomTypeId) {
+
+                HotelDatabase.roomTypes.remove(i);
+                System.out.println("RoomType deleted successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
+
+
+
+    
+
 
     //Add Amenity
     public void addAmenity(String name ,double  price ,int quantity) {
