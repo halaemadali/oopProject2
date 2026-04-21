@@ -50,22 +50,52 @@ public class Admin extends Staff {
     }
 
 
+   
     //update room
-    public void updateRoom(int roomNumber, RoomType type, Boolean isAvailable, View view, Integer floor, Double price) {
+    public void updateRoom(int roomNumber, RoomType type, boolean isAvailable, View view, int floor, double price) {
 
         for (Room r : HotelDatabase.rooms) {
             if (r.getRoomNumber() == roomNumber) {
 
-                if (type != null) r.setType(type);
-                if (isAvailable != null) r.setAvailable(isAvailable);
-                if (view != null) r.setView(view);
-                if (floor != null) r.setFloor(floor);
-                if (price != null) r.setPrice(price);
+                 r.setType(type);
+                 r.setAvailable(isAvailable);
+                 r.setView(view);
+                 r.setFloor(floor);
+                 r.setPrice(price);
 
                 System.out.println("Room updated successfully");
                 return;
             }
 
+        }
+        System.out.println("Room not found");
+    }
+
+
+
+     //update Room type in room
+    public void updateRoom(int roomNumber, RoomType type) {
+        for (Room r : HotelDatabase.rooms) {
+            if (r.getRoomNumber() == roomNumber) {
+                r.setType(type);
+                System.out.println("Room type updated successfully");
+                return;
+            }
+        }
+        System.out.println("Room not found");
+    }
+
+
+
+
+       //update availability of room
+    public void updateRoom(int roomNumber, boolean isAvailable) {
+        for (Room r : HotelDatabase.rooms) {
+            if (r.getRoomNumber() == roomNumber) {
+                r.setAvailable(isAvailable);
+                System.out.println("Availability updated");
+                return;
+            }
         }
         System.out.println("Room not found");
     }
@@ -128,17 +158,16 @@ public class Admin extends Staff {
 
 
 
-
-    // Update room type
-    public void updateRoomType(int roomTypeId, String newCategory, Integer newCapacity, Double newBasePrice) {
+ // Update room type
+    public void updateRoomType(int roomTypeId, String newCategory, int newCapacity, double newBasePrice) {
 
         for (RoomType t : HotelDatabase.roomTypes) {
 
             if (t.getroomTypeId()== roomTypeId) {
 
-                if (newCategory != null) t.setCategory(newCategory);
-                if (newCapacity != null) t.setCapacity(newCapacity);
-                if (newBasePrice != null) t.setBasePrice(newBasePrice);
+                t.setCategory(newCategory);
+                t.setCapacity(newCapacity);
+                t.setBasePrice(newBasePrice);
 
 
                 System.out.println("RoomType updated successfully");
@@ -148,6 +177,66 @@ public class Admin extends Staff {
 
         System.out.println("RoomType not found");
     }
+
+
+     //update category in room type
+    public void updateRoomType(int roomTypeId, String newCategory){
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            if (t.getroomTypeId()== roomTypeId) {
+
+               t.setCategory(newCategory);
+
+
+                System.out.println("Category updated successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
+
+    // Update Capacity in room type
+    public void updateRoomType(int roomTypeId, int newCapacity) {
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            if (t.getroomTypeId()== roomTypeId) {
+
+                t.setCapacity(newCapacity);;
+
+                System.out.println(" Capacity updated successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
+
+    // Update BasePrice in room type
+    public void updateRoomType(int roomTypeId, double newBasePrice) {
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            if (t.getroomTypeId()== roomTypeId) {
+
+                 t.setBasePrice(newBasePrice);
+
+
+                System.out.println("BasePrice updated successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
+
+
+
 
 
     // Delete room type
