@@ -93,4 +93,14 @@ public class RoomType {
         return roomTypeId;
     }
 
+    
+     @Override
+    public String toString() {
+        return "ID: " + roomTypeId + ", " +
+                category +
+                " (Capacity: " + capacity +
+                ", Base Price: " + BasePrice +
+                ")";
+    }
+
 }
