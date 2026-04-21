@@ -1,4 +1,3 @@
-
 import java.time.LocalDate;
 
 public abstract class Staff {
@@ -78,14 +77,13 @@ public abstract class Staff {
     }
 
 
-
     public void setDateOfBirth(LocalDate dateOfBirth) {
 
         if (dateOfBirth == null) {
             throw new IllegalArgumentException("Invalid date of birth");
         }
         LocalDate today = LocalDate.now();
-        if (dateOfBirth.isAfter(today)){
+        if (dateOfBirth.isAfter(today)) {
             throw new IllegalArgumentException("Invalid Birthday.");
         }
 
@@ -93,8 +91,7 @@ public abstract class Staff {
     }
 
 
-
-    public void setWorkingHours(int workingHours){
+    public void setWorkingHours(int workingHours) {
         if (workingHours < 0) {
             throw new IllegalArgumentException("INVALID WORKING HOURS");
 
@@ -104,54 +101,40 @@ public abstract class Staff {
     }
 
 
-
-    public void viewAllGuests(){
-
+    //view all guests
+    public void viewAllGuests() {
         if (HotelDatabase.guests.isEmpty()) {
             System.out.println("No guests found");
             return;
         }
-        System.out.println("============== View All Guests ============");
-        for(Guest g : HotelDatabase.guests) {
-
-            System.out.println("Username: " + g.getUsername());
-            System.out.println("Date of Birth: " + g.getDateOfBirth() );
-            System.out.println("Balance: " + g.getBalance());
-
-            System.out.println("---------------------------------------");
-
+        for (Guest g : HotelDatabase.guests) {
+            System.out.println(g);
         }
     }
 
+
+    //view all rooms
     public void viewAllRooms() {
-
-        System.out.println("============== View All Rooms ============");
         for (Room r : HotelDatabase.rooms) {
+            System.out.println(r);
 
-            System.out.println("Room Number: " + r.getRoomNumber());
-            System.out.println("Price: " + r.getPrice());
-            System.out.println("Available: " + r.getisavailable());
-
-            // RoomType details
-            System.out.println("Room Type Id: "+ r.getType().getroomTypeId());
-            System.out.println("\t\tRoom Category: " + r.getType().getRoomCategory());
-            System.out.println("\t\tCapacity: " + r.getType().getCapacity());
-            System.out.println("\t\tBase Price: " + r.getType().getRoomCategory().getBasePrice());
-
+            //print amenities in the room
             System.out.println("Amenities:");
             if (r.getAmenities() != null && !r.getAmenities().isEmpty()) {
+
                 for (Amenity a : r.getAmenities()) {
-                    System.out.println("- "+ a.getName() + "  Price: " + a.getPrice());
+                    System.out.println("- " + a.getName()
+                            + "  Price: " + a.getPrice());
                 }
+
             } else {
                 System.out.println("No amenities available");
             }
 
-
             System.out.println("---------------------------------------");
-
         }
     }
+
 
     // Prints all reservations in the system
     public void viewAllReservations() {
@@ -161,24 +144,10 @@ public abstract class Staff {
             return;
         }
 
-        System.out.println("=========== View All Reservations ===========");
-
         for (Reservation r : HotelDatabase.reservations) {
-
-            System.out.println("Reservation ID: " + r.getID());
-            System.out.println("Guest username: " +r.getGuest().getUsername() );
-            System.out.println("Room Number: " + r.getRoom().getRoomNumber());
-            System.out.println("Checkin: " + r.getCheckin());
-            System.out.println("Checkout: " + r.getCheckout());
-            System.out.println("Status: " + r.getStatus());
-            System.out.println("Duration : " + r.getDuration());
-
-            System.out.println("-------------------------------------------");
-
-
+            System.out.println(r);
         }
     }
-
 
 
     //view reservation
@@ -189,22 +158,17 @@ public abstract class Staff {
 
             if (r.getID() == reservationId) {
 
-                System.out.println("\nReservation ID: " + r.getID());
-                System.out.println("Guest username: " + r.getGuest().getUsername());
-                System.out.println("Room Number: " + r.getRoom().getRoomNumber());
-                System.out.println("Checkin: " + r.getCheckin());
-                System.out.println("Checkout: " + r.getCheckout());
-                System.out.println("Status: " + r.getStatus());
-                System.out.println("Duration : " + r.getDuration() + "\n");
+                System.out.println(r);
 
                 return;
             }
-
-            System.out.println("Reservation not found");
         }
+        System.out.println("Reservation not found");
+
     }
 
-    public void viewallPendingReservations(){
+
+    public void viewAllPendingReservations() {
         boolean pending = false;
         if (HotelDatabase.reservations.isEmpty()) {
             System.out.println("No reservations found");
@@ -214,18 +178,19 @@ public abstract class Staff {
         System.out.println("=========== View Pending Reservations ===========");
 
         for (Reservation r : HotelDatabase.reservations) {
-            if (r.getStatus() == ReservationStatus.PENDING){
+            if (r.getStatus() == ReservationStatus.PENDING) {
                 pending = true;
                 System.out.print(r.toString());
                 System.out.println("");
             }
         }
-        if (!pending){
+        if (!pending) {
             System.out.println("No PENDING reservations.");
         }
     }
 
-    public void confirmReservation(int reservationId){
+
+    public void confirmReservation(int reservationId) {
 
         for (Reservation r : HotelDatabase.reservations) {
 
@@ -248,6 +213,7 @@ public abstract class Staff {
         System.out.println("Reservation not found");
     }
 
+
     public void cancelReservation(int reservationId) {
 
         for (Reservation r : HotelDatabase.reservations) {
@@ -266,4 +232,17 @@ public abstract class Staff {
         }
         System.out.println("Reservation not found");
     }
+
+
+
+    @Override
+    public String toString() {
+        return "Staff: " + username +
+                ",Role: " + role +
+                ",Working Hours: " + workingHours;
+    }
+
 }
+
+
+
