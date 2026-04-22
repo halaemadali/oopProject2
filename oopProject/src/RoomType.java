@@ -11,7 +11,7 @@ public class RoomType {
     public RoomType(){
         numofroomtypes ++;
         this.roomTypeId = numofroomtypes;
-        HotelDatabase.roomTypes.add(this);
+
     }
 
     public RoomType(String type, int capacity, double price) {
@@ -21,7 +21,7 @@ public class RoomType {
         if (this.capacity == 0)  // only set manually if setCategory didn't auto-assign it
             setCapacity(capacity);
         setBasePrice(price);
-        HotelDatabase.roomTypes.add(this);
+
     }
 
     public String getCategory(){return category;}

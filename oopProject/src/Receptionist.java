@@ -2,17 +2,20 @@ import java.time.LocalDate;
 
 public class Receptionist extends Staff {
 
-    public Receptionist(String username, String password, LocalDate dateOfBirth, int workingHours) {
+    public Receptionist(String username, String password, LocalDate dateOfBirth, int workingHours) throws InvalidUsernameException {
 
         super(username, password, dateOfBirth, Role.RECEPTIONIST, workingHours);
-        HotelDatabase.receptionists.add(this);
     }
 
 
-    public void checkIn(int reservationId) {
+    public void checkIn(String username, int reservationId) {
         for (Reservation r : HotelDatabase.reservations) {
-
             if (r.getID() == reservationId) {
+
+                if (r.getGuest() == null || !r.getGuest().getUsername().equalsIgnoreCase(username)) {
+                    System.out.println("This reservation does not belong to guest: " + username + ".");
+                    return;
+                }
 
                 if (r.getStatus() == ReservationStatus.CANCELLED) {
                     System.out.println("Cannot check in a cancelled reservation.");
@@ -34,64 +37,70 @@ public class Receptionist extends Staff {
                     return;
                 }
 
-                // Add amenities guest chose during reservation
                 for (int i = 0; i < r.getRequired_amenities().size(); i++) {
                     r.getRoom().addAmenity(r.getRequired_amenities().get(i));
                 }
 
-
                 r.getRoom().setAvailable(false);
                 r.setStatus(ReservationStatus.CHECKED_IN);
-                System.out.println("Guest checked in successfully.");
+                System.out.println("Guest " + username + " checked in successfully.");
                 return;
             }
         }
         System.out.println("No reservation found with this ID.");
     }
 
+    public void processGuestCheckout(String username, int roomNumber, PaymentMethod method) {
 
-
-
-    public void checkoutGuest(int reservationId) {
+        Reservation targetReservation = null;
         for (Reservation r : HotelDatabase.reservations) {
-
-            if (r.getID() == reservationId) {
-
-                if (r.getStatus() == ReservationStatus.COMPLETED) {
-                    System.out.println("Guest already checked out.");
-                    return;
-                }
-
-                if (r.getStatus() == ReservationStatus.CANCELLED) {
-                    System.out.println("Cannot checkout a cancelled reservation.");
-                    return;
-                }
-
-                if (r.getStatus() != ReservationStatus.CHECKED_IN) {
-                    System.out.println("Guest has not checked in yet.");
-                    return;
-                }
-
-                // Check payment
-                if (r.getInvoice() == null) {
-                    System.out.println("No invoice found for this reservation.");
-                    return;
-                }
-
-                if (!r.getInvoice().getPaid()) {
-                    System.out.println("Payment not completed. Cannot checkout.");
-                    return;
-                }
-
-                // Finalize checkout
-                r.setStatus(ReservationStatus.COMPLETED);
-                r.getRoom().setAvailable(true);
-                r.getRoom().getAmenities().clear();  // remove amenities added at checkIn
-                System.out.println("Checkout successful. Room is now available.");
-                return;
+            if (r.getRoom().getRoomNumber() == roomNumber) {
+                targetReservation = r;
+                break;
             }
         }
-        System.out.println("No reservation found with this ID.");
+
+        if (targetReservation == null) {
+            System.out.println("No reservation found for room number " + roomNumber + ".");
+            return;
+        }
+
+        if (targetReservation.getStatus() != ReservationStatus.CHECKED_IN) {
+            System.out.println("Guest is not checked in to room " + roomNumber + ".");
+            return;
+        }
+
+        Guest guest = targetReservation.getGuest();
+        if (guest == null) {
+            System.out.println("No guest found for this reservation.");
+            return;
+        }
+        if (!guest.getUsername().equalsIgnoreCase(username)) {
+            System.out.println("This reservation does not belong to guest: " + username + ".");
+            return;
+        }
+
+        if (targetReservation.getInvoice() == null) {
+            System.out.println("No invoice found for this reservation.");
+            return;
+        }
+
+        // If already paid from system, just complete
+        if (targetReservation.getInvoice().getPaid()) {
+            System.out.println("Invoice already paid. Completing reservation...");
+            completeReservation(targetReservation.getID());
+            return;
+        }
+
+        try {
+            guest.checkOut(roomNumber, method);
+        } catch (InvalidPaymentException e) {
+            System.out.println("Checkout failed: " + e.getMessage());
+            return;
+        }
+
+
+        completeReservation(targetReservation.getID());
     }
 
 }

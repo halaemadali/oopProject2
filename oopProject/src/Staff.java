@@ -11,7 +11,7 @@ public abstract class Staff implements Manageable{
 
 
     //Constructor
-    public Staff(String username, String password, LocalDate dateOfBirth, Role role, int workingHours) {
+    public Staff(String username, String password, LocalDate dateOfBirth, Role role, int workingHours) throws InvalidUsernameException {
 
         setUsername(username);
         setPassword(password);
@@ -50,10 +50,10 @@ public abstract class Staff implements Manageable{
 
     //Setters
 
-    public void setUsername(String username) {
+    public void setUsername(String username) throws InvalidUsernameException {
 
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
+            throw new InvalidUsernameException("Username cannot be empty");
         }
 
         this.username = username;
@@ -228,6 +228,42 @@ public abstract class Staff implements Manageable{
             }
         }
         System.out.println("Reservation not found");
+    }
+
+    public void viewAllCheckedOutReservations() {
+        boolean found = false;
+        for (Reservation r : HotelDatabase.reservations) {
+            if (r.getStatus() == ReservationStatus.CHECKED_OUT) {
+                found = true;
+                System.out.println(r);
+            }
+        }
+        if (!found)
+            System.out.println("No checked-out reservations pending completion.");
+    }
+
+    public void completeReservation(int reservationId) {
+        for (Reservation r : HotelDatabase.reservations) {
+            if (r.getID() == reservationId) {
+
+                if (r.getStatus() != ReservationStatus.CHECKED_OUT) {
+                    System.out.println("Reservation must be CHECKED_OUT before completing.");
+                    return;
+                }
+
+                if (!r.getInvoice().getPaid()) {
+                    System.out.println("Invoice not paid. Cannot complete reservation.");
+                    return;
+                }
+
+                r.complete();
+                r.getRoom().setAvailable(true);
+                r.getRoom().clearAmenities();
+                System.out.println("Reservation " + reservationId + " completed. Room is now available.");
+                return;
+            }
+        }
+        System.out.println("Reservation not found.");
     }
 
 

@@ -25,19 +25,27 @@ class HotelDatabase {
 
   private static void createRoomTypes() {
     // RoomType constructor adds itself to HotelDatabase.roomTypes automatically
-    new RoomType("Single", 1, 500);
-    new RoomType("Double", 2, 800);
-    new RoomType("Triple", 3, 1100);
-    new RoomType("Suite", 4, 2000);
+    RoomType single = new RoomType("Single", 1, 500);
+    HotelDatabase.roomTypes.add(single);
+    RoomType duplex= new RoomType("Double", 2, 800);
+    HotelDatabase.roomTypes.add(duplex);
+    RoomType tri = new RoomType("Triple", 3, 1100);
+    HotelDatabase.roomTypes.add(tri);
+    RoomType suite = new RoomType("Suite", 4, 2000);
+    HotelDatabase.roomTypes.add(suite);
   }
 
   private static void createAmenities() {
-    // Amenity constructor adds itself to HotelDatabase.amenities automatically
-    new Amenity("WiFi", 50);
-    new Amenity("TV", 30);
-    new Amenity("Mini Bar", 100);
-    new Amenity("Air Conditioning", 80);
-    new Amenity("Room Service", 120);
+    Amenity a1= new Amenity("WiFi", 50);
+    HotelDatabase.amenities.add(a1);
+    Amenity a2= new Amenity("TV", 30);
+    HotelDatabase.amenities.add(a2);
+    Amenity a3= new Amenity("Mini Bar", 100);
+    HotelDatabase.amenities.add(a3);
+    Amenity a4= new Amenity("Air Conditioning", 80);
+    HotelDatabase.amenities.add(a4);
+    Amenity a5= new Amenity("Room Service", 120);
+    HotelDatabase.amenities.add(a5);
   }
 
   private static void createRooms() {
@@ -55,7 +63,6 @@ class HotelDatabase {
   }
 
   private static void createGuests() {
-    // Guest constructor does NOT add itself — must add manually
     String[] firstNames = {
             "Hana", "Mohamed", "Sara", "Ali", "Fatma", "Youssef", "Nour",
             "Omar", "Layla", "Hassan", "Salma", "Karim", "Rana", "Tarek",
@@ -105,8 +112,6 @@ class HotelDatabase {
   }
 
   private static void createStaff() {
-    // Admin constructor does NOT add itself — must add manually
-    // Receptionist constructor DOES add itself automatically
     try {
       Admin a1 = new Admin("admin1", "admin123", LocalDate.of(1980, 5, 10), 8);
       Admin a2 = new Admin("admin2", "admin456", LocalDate.of(1978, 3, 15), 8);
@@ -117,8 +122,10 @@ class HotelDatabase {
     }
 
     try {
-      new Receptionist("receptionist1", "recep123", LocalDate.of(1995, 6, 20), 8);
-      new Receptionist("receptionist2", "recep456", LocalDate.of(1998, 9, 25), 8);
+      Receptionist r1= new Receptionist("receptionist1", "recep123", LocalDate.of(1995, 6, 20), 8);
+      Receptionist r2= new Receptionist("receptionist2", "recep456", LocalDate.of(1998, 9, 25), 8);
+      HotelDatabase.receptionists.add(r1);
+      HotelDatabase.receptionists.add(r2);
     } catch (Exception e) {
       e.printStackTrace();
     }

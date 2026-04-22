@@ -266,12 +266,16 @@ public class Guest {
     }
 
     public void checkOut(int roomNumber, PaymentMethod method) throws InvalidPaymentException {
-
-        for (Reservation r : HotelDatabase.reservations) {
+        for (Reservation r : reservations) {
             if (r.getRoom().getRoomNumber() == roomNumber) {
 
                 if (r.getStatus() == ReservationStatus.COMPLETED) {
                     System.out.println("Already checked out.");
+                    return;
+                }
+
+                if (r.getStatus() != ReservationStatus.CHECKED_IN) {
+                    System.out.println("You are not checked in to this room.");
                     return;
                 }
 
@@ -282,17 +286,18 @@ public class Guest {
                 System.out.println("Total amount due: $" + total);
 
                 if (r.getGuest().getBalance() < total)
-                    throw new InvalidPaymentException("Guest balance is insufficient.");
+                    throw new InvalidPaymentException("Insufficient balance.");
 
                 r.getGuest().setBalance(r.getGuest().getBalance() - total);
                 r.getInvoice().pay(method);
+                r.setStatus(ReservationStatus.CHECKED_OUT);
 
-                System.out.println("Payment successful. Awaiting receptionist approval.");
+                System.out.println("Payment successful. Status set to CHECKED_OUT.");
+                System.out.println("Please proceed to the front desk.");
                 return;
             }
         }
-
-        System.out.println("No reservation found for room number " + roomNumber + ".");
+        System.out.println("No ongoing reservation found for room number " + roomNumber + ".");
     }
 
     private void validateDate(LocalDate d) {

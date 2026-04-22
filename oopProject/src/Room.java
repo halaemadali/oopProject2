@@ -21,9 +21,9 @@ public class Room {
         setRoomNumber(roomNumber);
         setType(type);
         setAvailable(isAvailable);
-        this.price = calculateRoomPrice();
         setFloor(f);
         setView(v);
+        this.price = calculateRoomPrice();
         //HotelDatabase.rooms.add(this);
     }
 
@@ -154,6 +154,10 @@ public class Room {
             throw new IllegalStateException("Invalid price: less than base price");
         if (Amenities.isEmpty())
             System.out.println("Warning: Room has no amenities");
+    }
+
+    public void clearAmenities() {
+        Amenities.clear();
     }
 
     @Override

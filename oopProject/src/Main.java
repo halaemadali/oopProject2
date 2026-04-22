@@ -1,55 +1,652 @@
-
-
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
+    static Scanner sc = new Scanner(System.in);
+    static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    // ─────────────────────────────────────────────
+    //  ENTRY POINT
+    // ─────────────────────────────────────────────
     public static void main(String[] args) {
+        HotelDatabase.initializeData();
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║    Welcome to Hotel Management System ║");
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Room Type
-        RoomType t1 = new RoomType("Single", 1, 500);
+        while (true) {
+            System.out.println("\n========== MAIN MENU ==========");
+            System.out.println("1. Guest");
+            System.out.println("2. Receptionist Login");
+            System.out.println("3. Admin Login");
+            System.out.println("0. Exit");
+            System.out.print("Select: ");
 
-        // Amenities
-        Amenity wifi = new Amenity("WiFi", 50);
-        Amenity tv = new Amenity("TV", 100);
-
-        // Room
-        Room r1 = new Room();
-        r1.setRoomNumber(101);
-        r1.setType(t1);
-        r1.setAvailable(true);
-
-        r1.addAmenity(wifi);
-        r1.addAmenity(tv);
-
-        System.out.println("Room Number: " + r1.getRoomNumber());
-        System.out.println("Available: " + r1.isAvailable());
-        System.out.println("Price: " + r1.calculateRoomPrice());
-
-        // Guest
-        Guest g1 = new Guest();
-
-        // Reservation
-        try {
-            Date in = new Date();
-            Date out = new Date(System.currentTimeMillis() + 86400000);
-
-            Reservation res = new Reservation(r1, g1, in, out);
-
-            res.confirm();
-            System.out.println("Reservation status: " + res.getStatus());
-
-            // Invoice test
-            System.out.println("Invoice total: " + res.getInvoice().calculateTotal());
-
-            res.getInvoice().pay(PaymentMethod.CASH);
-
-            res.complete();
-
-            System.out.println("Final status: " + res.getStatus());
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            int choice = readInt();
+            switch (choice) {
+                case 1 -> guestEntryMenu();
+                case 2 -> receptionistLoginMenu();
+                case 3 -> adminLoginMenu();
+                case 0 -> { System.out.println("Goodbye!"); return; }
+                default -> System.out.println("Invalid option. Try again.");
+            }
         }
+    }
+
+    // ─────────────────────────────────────────────
+    //  GUEST ENTRY  (register or login)
+    // ─────────────────────────────────────────────
+    static void guestEntryMenu() {
+        System.out.println("\n--- Guest Entry ---");
+        System.out.println("1. Register");
+        System.out.println("2. Login");
+        System.out.println("0. Back");
+        System.out.print("Select: ");
+
+        switch (readInt()) {
+            case 1 -> guestRegister();
+            case 2 -> {
+                Guest g = guestLogin();
+                if (g != null) guestMenu(g);
+            }
+            case 0 -> { }
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+    static void guestRegister() {
+        System.out.println("\n--- Guest Registration ---");
+        try {
+            System.out.print("Username: ");
+            String username = sc.nextLine().trim();
+            if (username.isEmpty()) { System.out.println("Username cannot be empty."); return; }
+
+            System.out.print("Password (min 6 chars): ");
+            String password = sc.nextLine().trim();
+
+            System.out.print("Date of Birth (yyyy-MM-dd): ");
+            LocalDate dob = parseDate(sc.nextLine().trim());
+            if (dob == null) return;
+
+            System.out.print("Balance: ");
+            double balance = readDouble();
+            if (balance < 0) { System.out.println("Balance cannot be negative."); return; }
+
+            System.out.print("Address: ");
+            String address = sc.nextLine().trim();
+
+            System.out.print("Gender (MALE/FEMALE): ");
+            Gender gender = parseGender(sc.nextLine().trim());
+            if (gender == null) return;
+
+            Guest g = new Guest(username, password, dob, balance, address, gender);
+            g.register();
+
+        } catch (InvalidUsernameException e) {
+            System.out.println("Username error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    static Guest guestLogin() {
+        System.out.println("\n--- Guest Login ---");
+        System.out.print("Username: ");
+        String u = sc.nextLine().trim();
+        System.out.print("Password: ");
+        String p = sc.nextLine().trim();
+        Guest g = Guest.login(u, p);
+        return g;
+    }
+
+    // ─────────────────────────────────────────────
+    //  GUEST MENU
+    // ─────────────────────────────────────────────
+    static void guestMenu(Guest guest) {
+        while (true) {
+            System.out.println("\n========== GUEST MENU [" + guest.getUsername() + "] ==========");
+            System.out.println("1.  View My Reservations");
+            System.out.println("2.  Make a Reservation");
+            System.out.println("3.  Cancel a Reservation");
+            System.out.println("4.  Check Out (self-service)");
+            System.out.println("5.  View Available Amenities");
+            System.out.println("0.  Logout");
+            System.out.print("Select: ");
+
+            switch (readInt()) {
+                case 1 -> guest.viewReservations();
+                case 2 -> guestMakeReservation(guest);
+                case 3 -> guestCancelReservation(guest);
+                case 4 -> guestCheckOut(guest);
+                case 5 -> guest.viewAvailableAmenities();
+                case 0 -> { System.out.println("Logged out."); return; }
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    static void guestMakeReservation(Guest guest) {
+        System.out.println("\n--- Make Reservation ---");
+        try {
+            // Show available room types
+            System.out.println("Available Room Types:");
+            for (RoomType rt : HotelDatabase.roomTypes)
+                System.out.println("  " + rt.getroomTypeId() + ". " + rt.getCategory()
+                        + " | Capacity: " + rt.getCapacity()
+                        + " | Base Price: $" + rt.getBasePrice());
+
+            System.out.print("Enter Room Type ID: ");
+            int typeId = readInt();
+            RoomType selectedType = null;
+            for (RoomType rt : HotelDatabase.roomTypes)
+                if (rt.getroomTypeId() == typeId) { selectedType = rt; break; }
+            if (selectedType == null) { System.out.println("Room type not found."); return; }
+
+            System.out.println("Available Views:");
+            for (View v : View.values())
+                System.out.println("  " + v.name() + " (+$" + v.getPrice() + ")");
+            System.out.print("Enter View (e.g. SEA_VIEW): ");
+            View view = parseView(sc.nextLine().trim());
+            if (view == null) return;
+
+            System.out.print("Check-in date (yyyy-MM-dd): ");
+            LocalDate checkin = parseDate(sc.nextLine().trim());
+            if (checkin == null) return;
+
+            System.out.print("Check-out date (yyyy-MM-dd): ");
+            LocalDate checkout = parseDate(sc.nextLine().trim());
+            if (checkout == null) return;
+
+            // Show available rooms
+            List<Room> availableRooms = guest.makeReservation(selectedType, view, checkin, checkout);
+
+            System.out.print("\nEnter Room Number to book: ");
+            int roomNumber = readInt();
+
+            // Optional amenities
+            guest.viewAvailableAmenities();
+            System.out.println("Enter amenity indices to add (comma-separated), or press Enter to skip:");
+            String amenityInput = sc.nextLine().trim();
+            List<Amenity> selectedAmenities = new ArrayList<>();
+            if (!amenityInput.isEmpty()) {
+                List<Amenity> allAmenities = guest.getAvailableAmenities();
+                for (String token : amenityInput.split(",")) {
+                    try {
+                        int idx = Integer.parseInt(token.trim());
+                        if (idx >= 0 && idx < allAmenities.size())
+                            selectedAmenities.add(allAmenities.get(idx));
+                        else
+                            System.out.println("Index " + idx + " out of range, skipped.");
+                    } catch (NumberFormatException e) {
+                        System.out.println("'" + token.trim() + "' is not a valid index, skipped.");
+                    }
+                }
+            }
+
+            guest.finalizeReservation(roomNumber, availableRooms, selectedAmenities, checkin, checkout);
+
+        } catch (RoomNotAvailableException e) {
+            System.out.println("No rooms available: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    static void guestCancelReservation(Guest guest) {
+        System.out.println("\n--- Cancel Reservation ---");
+        guest.viewReservations();
+        System.out.print("Enter Room Number to cancel: ");
+        int roomNum = readInt();
+        guest.cancelReservation(roomNum);
+    }
+
+    static void guestCheckOut(Guest guest) {
+        System.out.println("\n--- Self-Service Check Out ---");
+        guest.viewReservations();
+        System.out.print("Enter Room Number: ");
+        int roomNum = readInt();
+        PaymentMethod method = selectPaymentMethod();
+        if (method == null) return;
+        try {
+            guest.checkOut(roomNum, method);
+        } catch (InvalidPaymentException e) {
+            System.out.println("Payment failed: " + e.getMessage());
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    //  RECEPTIONIST LOGIN + MENU
+    // ─────────────────────────────────────────────
+    static void receptionistLoginMenu() {
+        System.out.println("\n--- Receptionist Login ---");
+        System.out.print("Username: ");
+        String u = sc.nextLine().trim();
+        System.out.print("Password: ");
+        String p = sc.nextLine().trim();
+
+        Receptionist found = null;
+        for (Receptionist r : HotelDatabase.receptionists)
+            if (r.getUsername().equals(u) && r.getPassword().equals(p)) { found = r; break; }
+
+        if (found == null) { System.out.println("Invalid credentials."); return; }
+        System.out.println("Welcome, " + found.getUsername() + "!");
+        receptionistMenu(found);
+    }
+
+    static void receptionistMenu(Receptionist rec) {
+        while (true) {
+            System.out.println("\n========== RECEPTIONIST MENU [" + rec.getUsername() + "] ==========");
+            System.out.println("1.  View All Guests");
+            System.out.println("2.  View All Rooms");
+            System.out.println("3.  View All Reservations");
+            System.out.println("4.  View Pending Reservations");
+            System.out.println("5.  Confirm Reservation");
+            System.out.println("6.  Cancel Reservation");
+            System.out.println("7.  Check In Guest");
+            System.out.println("8.  Process Guest Checkout");
+            System.out.println("9.  View Checked-Out Reservations");
+            System.out.println("10. Complete Reservation");
+            System.out.println("0.  Logout");
+            System.out.print("Select: ");
+
+            switch (readInt()) {
+                case 1  -> rec.viewAllGuests();
+                case 2  -> rec.viewAllRooms();
+                case 3  -> rec.viewAllReservations();
+                case 4  -> rec.viewAllPendingReservations();
+                case 5  -> {
+                    System.out.print("Reservation ID: ");
+                    rec.confirmReservation(readInt());
+                }
+                case 6  -> {
+                    System.out.print("Reservation ID: ");
+                    rec.cancelReservation(readInt());
+                }
+                case 7  -> {
+                    System.out.print("Guest username: ");
+                    String uname = sc.nextLine().trim();
+                    System.out.print("Reservation ID: ");
+                    int resId = readInt();
+                    rec.checkIn(uname, resId);
+                }
+                case 8  -> {
+                    System.out.print("Guest username: ");
+                    String uname = sc.nextLine().trim();
+                    System.out.print("Room Number: ");
+                    int roomNum = readInt();
+                    PaymentMethod method = selectPaymentMethod();
+                    if (method != null) rec.processGuestCheckout(uname, roomNum, method);
+                }
+                case 9  -> rec.viewAllCheckedOutReservations();
+                case 10 -> {
+                    System.out.print("Reservation ID: ");
+                    rec.completeReservation(readInt());
+                }
+                case 0  -> { System.out.println("Logged out."); return; }
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    //  ADMIN LOGIN + MENU
+    // ─────────────────────────────────────────────
+    static void adminLoginMenu() {
+        System.out.println("\n--- Admin Login ---");
+        System.out.print("Username: ");
+        String u = sc.nextLine().trim();
+        System.out.print("Password: ");
+        String p = sc.nextLine().trim();
+
+        Admin found = null;
+        for (Admin a : HotelDatabase.admins)
+            if (a.getUsername().equals(u) && a.getPassword().equals(p)) { found = a; break; }
+
+        if (found == null) { System.out.println("Invalid credentials."); return; }
+        System.out.println("Welcome, " + found.getUsername() + "!");
+        adminMenu(found);
+    }
+
+    static void adminMenu(Admin admin) {
+        while (true) {
+            System.out.println("\n========== ADMIN MENU [" + admin.getUsername() + "] ==========");
+            System.out.println("--- Rooms ---");
+            System.out.println("1.  Add Room");
+            System.out.println("2.  View Room");
+            System.out.println("3.  Update Room");
+            System.out.println("4.  Delete Room");
+            System.out.println("5.  View All Rooms");
+            System.out.println("--- Room Types ---");
+            System.out.println("6.  Add Room Type");
+            System.out.println("7.  View Room Type");
+            System.out.println("8.  View All Room Types");
+            System.out.println("9.  Update Room Type");
+            System.out.println("10. Delete Room Type");
+            System.out.println("--- Amenities ---");
+            System.out.println("11. Add Amenity");
+            System.out.println("12. View All Amenities");
+            System.out.println("13. Update Amenity Price");
+            System.out.println("14. Delete Amenity");
+            System.out.println("15. Add Amenity to Room");
+            System.out.println("16. View Amenities in Room");
+            System.out.println("17. Remove Amenity from Room");
+            System.out.println("--- Staff & Guests ---");
+            System.out.println("18. Add Receptionist Account");
+            System.out.println("19. View All Guests");
+            System.out.println("20. View All Reservations");
+            System.out.println("0.  Logout");
+            System.out.print("Select: ");
+
+            switch (readInt()) {
+                case 1  -> adminAddRoom(admin);
+                case 2  -> { System.out.print("Room Number: "); admin.viewRoom(readInt()); }
+                case 3  -> adminUpdateRoom(admin);
+                case 4  -> adminDeleteRoom(admin);
+                case 5  -> admin.viewAllRooms();
+                case 6  -> adminAddRoomType(admin);
+                case 7  -> { System.out.print("Room Type ID: "); admin.viewRoomType(readInt()); }
+                case 8  -> admin.viewAllRoomTypes();
+                case 9  -> adminUpdateRoomType(admin);
+                case 10 -> { System.out.print("Room Type ID to delete: "); adminDeleteRoomType(admin, readInt()); }
+                case 11 -> adminAddAmenity(admin);
+                case 12 -> admin.viewAllAmenities();
+                case 13 -> adminUpdateAmenity(admin);
+                case 14 -> adminDeleteAmenity(admin);
+                case 15 -> adminAddAmenityToRoom(admin);
+                case 16 -> { System.out.print("Room Number: "); admin.viewAmenitiesInRoom(readInt()); }
+                case 17 -> adminRemoveAmenityFromRoom(admin);
+                case 18 -> adminAddReceptionist(admin);
+                case 19 -> admin.viewAllGuests();
+                case 20 -> admin.viewAllReservations();
+                case 0  -> { System.out.println("Logged out."); return; }
+                default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    // ─── Admin sub-actions ───────────────────────
+
+    static void adminAddRoom(Admin admin) {
+        System.out.println("\n--- Add Room ---");
+        try {
+            System.out.print("Room Number: ");
+            int roomNum = readInt();
+
+            admin.viewAllRoomTypes();
+            System.out.print("Room Type ID: ");
+            int typeId = readInt();
+            RoomType selectedType = null;
+            for (RoomType rt : HotelDatabase.roomTypes)
+                if (rt.getroomTypeId() == typeId) { selectedType = rt; break; }
+            if (selectedType == null) { System.out.println("Room type not found."); return; }
+
+            System.out.println("Views: " + java.util.Arrays.toString(View.values()));
+            System.out.print("View (e.g. SEA_VIEW): ");
+            View view = parseView(sc.nextLine().trim());
+            if (view == null) return;
+
+            System.out.print("Floor (0-5): ");
+            int floor = readInt();
+
+            System.out.print("Available (true/false): ");
+            boolean avail = Boolean.parseBoolean(sc.nextLine().trim());
+
+            admin.addRoom(roomNum, selectedType, avail, view, floor);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    static void adminUpdateRoom(Admin admin) {
+        System.out.println("\n--- Update Room ---");
+        System.out.print("Room Number to update: ");
+        int roomNum = readInt();
+
+        System.out.println("What to update?");
+        System.out.println("1. Room Number");
+        System.out.println("2. Room Type");
+        System.out.println("3. Availability");
+        System.out.println("4. Price");
+        System.out.print("Select: ");
+
+        switch (readInt()) {
+            case 1 -> {
+                System.out.print("New Room Number: ");
+                admin.updateRoomNumber(roomNum, readInt());
+            }
+            case 2 -> {
+                admin.viewAllRoomTypes();
+                System.out.print("New Room Type ID: ");
+                int tid = readInt();
+                RoomType t = null;
+                for (RoomType rt : HotelDatabase.roomTypes)
+                    if (rt.getroomTypeId() == tid) { t = rt; break; }
+                if (t == null) { System.out.println("Type not found."); return; }
+                admin.updateRoom(roomNum, t);
+            }
+            case 3 -> {
+                System.out.print("Available (true/false): ");
+                admin.updateRoom(roomNum, Boolean.parseBoolean(sc.nextLine().trim()));
+            }
+            case 4 -> {
+                System.out.print("New Price: ");
+                double price = readDouble();
+                admin.updateRoom(roomNum, null, null, null, price);
+            }
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+    static void adminDeleteRoom(Admin admin) {
+        System.out.println("\n--- Delete Room ---");
+        System.out.print("Room Number: ");
+        int rn = readInt();
+        try {
+            admin.deleteRoom(rn);
+        } catch (IllegalStateException e) {
+            System.out.println("Cannot delete: " + e.getMessage());
+        }
+    }
+
+    static void adminAddRoomType(Admin admin) {
+        System.out.println("\n--- Add Room Type ---");
+        try {
+            System.out.print("Category name: ");
+            String cat = sc.nextLine().trim();
+            System.out.print("Capacity: ");
+            int cap = readInt();
+            System.out.print("Base Price: ");
+            double price = readDouble();
+            admin.addRoomType(cat, cap, price);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    static void adminUpdateRoomType(Admin admin) {
+        System.out.println("\n--- Update Room Type ---");
+        admin.viewAllRoomTypes();
+        System.out.print("Room Type ID to update: ");
+        int rtId = readInt();
+
+        System.out.println("What to update?");
+        System.out.println("1. Capacity");
+        System.out.println("2. Base Price");
+        System.out.print("Select: ");
+
+        switch (readInt()) {
+            case 1 -> {
+                System.out.print("New Capacity: ");
+                admin.updateRoomType(rtId, readInt());
+            }
+            case 2 -> {
+                System.out.print("New Base Price: ");
+                admin.updateRoomType(rtId, readDouble());
+            }
+            default -> System.out.println("Invalid option.");
+        }
+    }
+
+    static void adminDeleteRoomType(Admin admin, int rtId) {
+        try {
+            admin.deleteRoomType(rtId);
+        } catch (IllegalStateException e) {
+            System.out.println("Cannot delete: " + e.getMessage());
+        }
+    }
+
+    static void adminAddAmenity(Admin admin) {
+        System.out.println("\n--- Add Amenity ---");
+        System.out.print("Amenity name: ");
+        String name = sc.nextLine().trim();
+        if (name.isEmpty()) { System.out.println("Name cannot be empty."); return; }
+        System.out.print("Price: ");
+        double price = readDouble();
+        try {
+            admin.addAmenity(name, price);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    static void adminUpdateAmenity(Admin admin) {
+        System.out.println("\n--- Update Amenity Price ---");
+        admin.viewAllAmenities();
+        System.out.print("Amenity name: ");
+        String name = sc.nextLine().trim();
+        System.out.print("New price: ");
+        double price = readDouble();
+        admin.updateAmenity(name, price);
+    }
+
+    static void adminDeleteAmenity(Admin admin) {
+        System.out.println("\n--- Delete Amenity ---");
+        admin.viewAllAmenities();
+        System.out.print("Amenity name: ");
+        String name = sc.nextLine().trim();
+        try {
+            admin.deleteAmenity(name);
+        } catch (IllegalStateException e) {
+            System.out.println("Cannot delete: " + e.getMessage());
+        }
+    }
+
+    static void adminAddAmenityToRoom(Admin admin) {
+        System.out.println("\n--- Add Amenity to Room ---");
+        System.out.print("Room Number: ");
+        int rn = readInt();
+        admin.viewAllAmenities();
+        System.out.print("Amenity name: ");
+        String name = sc.nextLine().trim();
+        admin.addAmenityToRoom(rn, name);
+    }
+
+    static void adminRemoveAmenityFromRoom(Admin admin) {
+        System.out.println("\n--- Remove Amenity from Room ---");
+        System.out.print("Room Number: ");
+        int rn = readInt();
+        admin.viewAmenitiesInRoom(rn);
+        System.out.print("Amenity name to remove: ");
+        String name = sc.nextLine().trim();
+        admin.removeAmenityFromRoom(rn, name);
+    }
+
+    static void adminAddReceptionist(Admin admin) {
+        System.out.println("\n--- Add Receptionist Account ---");
+        try {
+            System.out.print("Username: ");
+            String u = sc.nextLine().trim();
+            System.out.print("Password (min 6 chars): ");
+            String p = sc.nextLine().trim();
+            System.out.print("Date of Birth (yyyy-MM-dd): ");
+            LocalDate dob = parseDate(sc.nextLine().trim());
+            if (dob == null) return;
+            System.out.print("Working Hours: ");
+            int wh = readInt();
+            admin.addReceptionist(u, p, dob, wh);
+            System.out.println("Receptionist added successfully.");
+        } catch (InvalidUsernameException e) {
+            System.out.println("Username error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    //  HELPER UTILITIES
+    // ─────────────────────────────────────────────
+
+    /** Reads an integer, consuming the leftover newline. Returns -1 on bad input. */
+    static int readInt() {
+        while (true) {
+            String line = sc.nextLine().trim();
+            try {
+                return Integer.parseInt(line);
+            } catch (NumberFormatException e) {
+                System.out.print("Please enter a valid integer: ");
+            }
+        }
+    }
+
+    /** Reads a double, consuming the leftover newline. */
+    static double readDouble() {
+        while (true) {
+            String line = sc.nextLine().trim();
+            try {
+                return Double.parseDouble(line);
+            } catch (NumberFormatException e) {
+                System.out.print("Please enter a valid number: ");
+            }
+        }
+    }
+
+    /** Parses a date string; prints an error and returns null on failure. */
+    static LocalDate parseDate(String s) {
+        try {
+            return LocalDate.parse(s, DATE_FMT);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Expected yyyy-MM-dd.");
+            return null;
+        }
+    }
+
+    /** Parses a Gender; prints an error and returns null on failure. */
+    static Gender parseGender(String s) {
+        try {
+            return Gender.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid gender. Use MALE or FEMALE.");
+            return null;
+        }
+    }
+
+    /** Parses a View enum; prints an error and returns null on failure. */
+    static View parseView(String s) {
+        try {
+            return View.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid view. Options: SEA_VIEW, POOL_VIEW, GARDEN_VIEW, CITY_VIEW");
+            return null;
+        }
+    }
+
+    /** Prompts the user to select a PaymentMethod. */
+    static PaymentMethod selectPaymentMethod() {
+        System.out.println("Payment Method:");
+        System.out.println("1. CASH");
+        System.out.println("2. CREDIT_CARD");
+        System.out.println("3. ONLINE");
+        System.out.print("Select: ");
+        return switch (readInt()) {
+            case 1 -> PaymentMethod.CASH;
+            case 2 -> PaymentMethod.CREDIT_CARD;
+            case 3 -> PaymentMethod.ONLINE;
+            default -> { System.out.println("Invalid payment method."); yield null; }
+        };
     }
 }

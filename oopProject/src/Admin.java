@@ -2,8 +2,9 @@ import java.time.LocalDate;
 
 public class Admin extends Staff {
 
-    public Admin(String username, String password, LocalDate dateOfBirth, int workingHours) {
+    public Admin(String username, String password, LocalDate dateOfBirth, int workingHours) throws InvalidUsernameException {
         super(username, password, dateOfBirth, Role.ADMIN, workingHours);
+        HotelDatabase.admins.add(this);
 
     }
 
@@ -411,6 +412,12 @@ public class Admin extends Staff {
         }
 
         System.out.println("Room not found");
+    }
+
+    // add receptionist account to system
+    public void addReceptionist(String Username, String Password, LocalDate bday, int workinghours) throws InvalidUsernameException{
+        Receptionist r = new Receptionist(username, password,bday, workinghours);
+        HotelDatabase.receptionists.add(r);
     }
 
 
