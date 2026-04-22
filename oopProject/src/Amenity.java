@@ -3,9 +3,8 @@ public class Amenity {
     private double price;   // price per unit
 
     public Amenity(String name, double price) {
-        this.name = name;
-        this.price = price;
-        HotelDatabase.amenities.add(this);
+        setName(name);
+        setPrice(price);
 
     }
 
@@ -19,6 +18,9 @@ public class Amenity {
 
 
     public void setName(String name) {
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Amenity name cannot be null or empty");
+
         this.name = name;
     }
 
@@ -32,13 +34,8 @@ public class Amenity {
 
     @Override
     public String toString(){
-        return getName();
-    }
-
-    @Override
-    public String toString(){
         return    "( " + name +
-                " price: "  + price + " )";
+                " price: $"  + price + " )";
 
     }
 

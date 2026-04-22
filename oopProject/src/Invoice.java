@@ -1,28 +1,23 @@
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Invoice implements Payable {
     private int ID;
     private Reservation reservation;
     private double amount;
-    private Date date;
+    private LocalDate date;
     private boolean isPaid;
     private PaymentMethod method;
 
-    //constructors
-    public Invoice(){
-
+    public Invoice() {
     }
-    public Invoice(Reservation r){
+
+    public Invoice(Reservation r) {
         this.reservation = r;
         this.ID = this.reservation.getID();
         this.amount = calculateTotal();
         this.isPaid = false;
-
     }
 
-
-
-    //setters and getters
     public int getID() {
         return ID;
     }
@@ -43,12 +38,11 @@ public class Invoice implements Payable {
         return amount;
     }
 
-
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -60,24 +54,21 @@ public class Invoice implements Payable {
         isPaid = paid;
     }
 
-    //methods
     @Override
-    public void pay(PaymentMethod method){
+    public void pay(PaymentMethod method) {
         if (isPaid)
             throw new IllegalStateException("Already paid.");
-
         this.method = method;
-        this.date = new Date();
+        this.date = LocalDate.now();
         this.isPaid = true;
-
     }
 
-    public double calculateTotal(){
+    public double calculateTotal() {
         if (reservation == null || reservation.getRoom() == null)
             return 0;
-        double total = (reservation.getDuration()) * (reservation.getRoom().getPrice());
-        return total;
+        return reservation.getDuration() * reservation.getRoom().getPrice();
     }
+
     @Override
     public String toString() {
         return "Invoice{" +
@@ -89,15 +80,12 @@ public class Invoice implements Payable {
                 ", method=" + (method != null ? method : "null") +
                 '}';
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         Invoice other = (Invoice) obj;
-
         return this.ID == other.ID;
     }
-
-
 }

@@ -1,95 +1,57 @@
-
-
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
-
 
 public class Guest {
 
-    // Variables
     private String username;
     private String password;
     private LocalDate dateOfBirth;
     private double balance;
     private String address;
     private Gender gender;
-
     private List<RoomType> roomPreferences;
+    private List<Reservation> reservations;
 
-    private List<Room> availableRooms;
-    private List<Reservation> reservations ;
-
-
-    //Constructor
     public Guest() {
-        this.availableRooms = new ArrayList<>();
         this.reservations = new ArrayList<>();
-        HotelDatabase.guests.add(this);
+        this.roomPreferences = new ArrayList<>();
     }
 
-
     public Guest(String username, String password, LocalDate dateOfBirth,
-                 double balance, String address, Gender gender,
-                 List<RoomType> roomPreferences)throws InvalidUsernameException , Exception  {
+                 double balance, String address, Gender gender)
+            throws InvalidUsernameException, Exception {
 
         setUsername(username);
-        setPassword(password);//set for validation
+        setPassword(password);
         setDateOfBirth(dateOfBirth);
         setBalance(balance);
         this.address = address;
         this.gender = gender;
-        this.roomPreferences = roomPreferences != null ? roomPreferences : new ArrayList<>();
         this.reservations = new ArrayList<>();
-        this.availableRooms = new ArrayList<>();
-        HotelDatabase.guests.add(this);
+        this.roomPreferences = new ArrayList<>();
     }
-
-
-
-
-    // Getters & Setters
 
     public String getUsername() {
         return username;
     }
 
-
-
-
     public void setUsername(String username) throws InvalidUsernameException {
-
-        if (username == null) {
-            throw new InvalidUsernameException("Username cannot be null");
-        }
-        else if (username.trim().isEmpty()) {
-            throw new InvalidUsernameException("Username cannot be empty");
-        }
-        else {
-            this.username = username;
-        }
+        if (username == null || username.trim().isEmpty())
+            throw new InvalidUsernameException("Username cannot be null or empty");
+        this.username = username;
     }
-
-
-
 
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) throws Exception {
-        if (password == null) {
+        if (password == null)
             throw new Exception("Password cannot be null");
-        }
-        else if (password.length() < 6) {
+        if (password.length() < 6)
             throw new Exception("Password must be at least 6 characters");
-        }
-        else {
-            this.password = password;
-        }
+        this.password = password;
     }
 
     public LocalDate getDateOfBirth() {
@@ -97,15 +59,11 @@ public class Guest {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-
-        if (dateOfBirth == null) {
-            System.out.println("Date Of Birth is null");
-        }
-        LocalDate today = LocalDate.now();
-        if (dateOfBirth.isAfter(today)){
-            throw new IllegalArgumentException("Invalid Birthday.");
-        }
-        else{ this.dateOfBirth = dateOfBirth;}
+        if (dateOfBirth == null)
+            throw new IllegalArgumentException("Date of birth cannot be null");
+        if (dateOfBirth.isAfter(LocalDate.now()))
+            throw new IllegalArgumentException("Invalid date of birth");
+        this.dateOfBirth = dateOfBirth;
     }
 
     public double getBalance() {
@@ -113,26 +71,38 @@ public class Guest {
     }
 
     public void setBalance(double balance) {
-        if (balance < 0) {
-            System.out.println("Balance cannot be negative");
+        if (balance < 0)
+            throw new IllegalArgumentException("Balance cannot be negative");
+        this.balance = balance;
+    }
 
-        }
-        else{  this.balance = balance;}
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public List<RoomType> getRoomPreferences() {
+        return roomPreferences;
     }
 
     public List<Reservation> getReservations() {
         return reservations;
     }
 
-    //methods
-
-    //register
-
-    public void register(){
-
+    public void register() {
         for (Guest g : HotelDatabase.guests) {
-
-            if(g.getUsername().equals(this.username)){
+            if (g.getUsername().equals(this.username)) {
                 System.out.println("Username already exists!");
                 return;
             }
@@ -141,253 +111,210 @@ public class Guest {
         System.out.println("Registered successfully!");
     }
 
-    //login
-
-    public static Guest login(String username, String password){
+    public static Guest login(String username, String password) {
         for (Guest g : HotelDatabase.guests) {
             if (g.getUsername().equals(username) &&
                     g.getPassword().equals(password)) {
-
                 System.out.println("Login successful!");
                 return g;
             }
-
         }
-
         System.out.println("Invalid username or password!");
         return null;
-
     }
 
+    public List<Room> viewAvailableRooms(RoomType type, View view, LocalDate in, LocalDate out)
+            throws RoomNotAvailableException {
 
+        List<Room> availableRooms = new ArrayList<>();
 
-    //View Available Rooms
-    public List<Room> viewAvailableRooms(){
-        availableRooms.clear();
         for (Room room : HotelDatabase.rooms) {
-            if ((roomPreferences == null || roomPreferences.contains(room.getType()))
-                    && room.getisavailable()) {
+            if (room.getType() == type &&
+                    room.getView() == view &&
+                    room.checkAvailabilityPeriod(in, out)) {
 
                 availableRooms.add(room);
+                System.out.println("-----------------------------");
+                System.out.println("Room Number: " + room.getRoomNumber());
+                System.out.println("Room Type:   " + room.getType());
+                System.out.println("Room View:   " + room.getView());
+                System.out.println("Room Floor:  " + room.getFloor());
+                System.out.println("Price/night: $" + room.getPrice());
             }
         }
+
+        if (availableRooms.isEmpty())
+            throw new RoomNotAvailableException("No rooms available with these specifications.");
 
         return availableRooms;
-
-    }
-//chooseAmenities
-    public void chooseAmenities(Room room, Scanner input) {
-
-    System.out.println("Available amenities:");
-
-    for (int i = 0; i < HotelDatabase.amenities.size(); i++) {
-        System.out.println(i + ": " + HotelDatabase.amenities.get(i));
     }
 
-    System.out.println("Enter amenity index or type 'done' to finish:");
+    public Room selectRoom(int roomNumber, List<Room> availableRooms) {
+        for (Room room : availableRooms) {
+            if (room.getRoomNumber() == roomNumber)
+                return room;
+        }
+        throw new IllegalArgumentException("Selected room number is not in the available rooms list.");
+    }
 
-    while (true) {
+    public void viewAvailableAmenities() {
+        if (HotelDatabase.amenities == null || HotelDatabase.amenities.isEmpty()) {
+            System.out.println("No amenities available.");
+            return;
+        }
+        System.out.println("Available Amenities:");
 
-        String inputValue = input.next();
-
-        if (inputValue.equalsIgnoreCase("done")) {
-            break;
+        for (int i = 0; i < HotelDatabase.amenities.size(); i++) {
+            Amenity a = HotelDatabase.amenities.get(i);
+            System.out.println(i + ": " + a.getName() + " | Price: $" + a.getPrice());
         }
 
-        try {
-            int choice = Integer.parseInt(inputValue);
-
-            if (choice >= 0 && choice < HotelDatabase.amenities.size()) {
-
-                Amenity a = HotelDatabase.amenities.get(choice);
-
-                try {
-                    room.addAmenity(a);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-
-            } else {
-                System.out.println("Invalid index!");
-            }
-
-        } catch (NumberFormatException e) {
-            System.out.println("Please enter a valid number or 'done'");
-        }
     }
-}
 
-    //make Reservation
-   public void makeReservation(Scanner input) {
+    public List<Amenity> getAvailableAmenities() {
+        if (HotelDatabase.amenities == null || HotelDatabase.amenities.isEmpty())
+            throw new IllegalStateException("No amenities available in the system.");
+        return new ArrayList<>(HotelDatabase.amenities);
+    }
 
-    try {
+    public List<Room> makeReservation(RoomType type, View view, LocalDate checkin, LocalDate checkout)
+            throws RoomNotAvailableException {
+        validateDate(checkin);
+        validateDate(checkout);
+        validateRange(checkin, checkout);
+        return viewAvailableRooms(type, view, checkin, checkout);
+    }
 
-        Room selectedRoom = null;
+    public Reservation finalizeReservation(int roomNumber,
+                                           List<Room> availableRooms,
+                                           List<Amenity> selectedAmenities,
+                                           LocalDate checkin, LocalDate checkout) throws Exception {
 
-        while (true) {
+        Room selectedRoom = selectRoom(roomNumber, availableRooms);
 
-            System.out.println("Enter your preferred room type (Single/Double/Triple) or 'exit' to stop:");
-            String pref = input.next();
-
-            if (pref.equalsIgnoreCase("exit")) {
-                System.out.println("Reservation cancelled.");
-                return;
-            }
-
-            
-            List<Room> foundRooms = new ArrayList<>();
-
-            for (Room room : HotelDatabase.rooms) {
-
-                if (room.getisavailable() &&
-                        room.getType().getCategory().equalsIgnoreCase(pref)) {
-
-                    foundRooms.add(room);
-                }
-            }
-
-         
-            if (!foundRooms.isEmpty()) {
-
-                System.out.println("Available rooms:");
-
-                for (int i = 0; i < foundRooms.size(); i++) {
-                    Room r = foundRooms.get(i);
-
-                    System.out.println(i + ": Room " + r.getRoomNumber()
-                            + " | Price: " + r.getPrice());
-                }
-
-                System.out.println("Choose room index:");
-                int choice = input.nextInt();
-
-                if (choice < 0 || choice >= foundRooms.size()) {
-                    System.out.println("Invalid choice!");
-                    continue;
-                }
-
-                selectedRoom = foundRooms.get(choice);
-    
-            }
-
-        
-            else {
-                System.out.println("No rooms available for this preference. Try another.");
+        if (selectedAmenities != null && !selectedAmenities.isEmpty()) {
+            for (Amenity a : selectedAmenities) {
+                if (!HotelDatabase.amenities.contains(a))
+                    throw new IllegalArgumentException("Invalid amenity: " + a.getName());
             }
         }
 
-        
-        chooseAmenities(selectedRoom, input);
+        Reservation reservation = new Reservation(selectedRoom, this, checkin, checkout);
 
-        
-        System.out.println("Enter check-in day:");
-        int inDay = input.nextInt();
+        if (selectedAmenities != null && !selectedAmenities.isEmpty())
+            reservation.setRequired_amenities(selectedAmenities);
 
-        System.out.println("Enter check-out day:");
-        int outDay = input.nextInt();
+        reservations.add(reservation);
 
-        Date checkin = new Date(2026 - 1900, 5, inDay);
-        Date checkout = new Date(2026 - 1900, 5, outDay);
 
-        
-        Reservation res = new Reservation(selectedRoom, this, checkin, checkout);
+        System.out.println("Reservation placed successfully!");
+        System.out.println("Reservation ID: " + reservation.getID());
+        System.out.println("Status: PENDING — awaiting staff confirmation.");
+        System.out.println("Room: " + roomNumber);
+        if (selectedAmenities == null || selectedAmenities.isEmpty()) {
+            System.out.println("Amenities: None selected");
+        } else {
+            System.out.print("Amenities: ");
+            for (int i = 0; i < selectedAmenities.size(); i++) {
+                System.out.print(selectedAmenities.get(i).getName());
+                if (i < selectedAmenities.size() - 1) System.out.print(", ");
+            }
+            System.out.println();
+        }
 
-        reservations.add(res);
-        HotelDatabase.reservations.add(res);
-
-        res.confirm();
-
-        System.out.println("Reservation successful!");
-
-    } catch (Exception e) {
-        System.out.println(e.getMessage());
+        return reservation;
     }
-}
 
+    public void cancelReservation(int roomNumber) {
 
+        Reservation toCancel = null;
+        for (Reservation r : reservations) {
+            if (r.getRoom().getRoomNumber() == roomNumber) {
+                toCancel = r;
+                break;
+            }
+        }
 
-
-    
-    //cancle reservation
-    public void cancelReservation(Reservation r) {
-
-        if (r == null) {
-            System.out.println("Invalid reservation");
+        if (toCancel == null) {
+            System.out.println("No reservation found for room number " + roomNumber + ".");
             return;
         }
 
-        r.cancel();
-    }
-
-    //view reservation
-    public void viewReservations() {
-
-        for (Reservation r : reservations) {
-            System.out.println("Room: " + r.getRoom().getRoomNumber());
+        if (toCancel.getStatus() == ReservationStatus.CANCELLED) {
+            System.out.println("This reservation is already cancelled.");
+            return;
         }
+
+        if (toCancel.getStatus() == ReservationStatus.COMPLETED) {
+            System.out.println("Cannot cancel a completed reservation.");
+            return;
+        }
+
+        toCancel.cancel();
+        reservations.remove(toCancel);
+        System.out.println("Reservation for room " + roomNumber + " cancelled successfully.");
     }
 
-    //checkout
-    public void checkOut(int roomnumber, PaymentMethod method) throws InvalidPaymentException {
+    public void viewReservations() {
+        if (reservations.isEmpty()) {
+            System.out.println("No reservations found.");
+            return;
+        }
+        System.out.println("Your Reservations:");
+        for (Reservation r : reservations)
+            System.out.println(r);
+    }
+
+    public void checkOut(int roomNumber, PaymentMethod method) throws InvalidPaymentException {
 
         for (Reservation r : HotelDatabase.reservations) {
-
-            if (r.getRoom().getRoomNumber() == roomnumber) {
+            if (r.getRoom().getRoomNumber() == roomNumber) {
 
                 if (r.getStatus() == ReservationStatus.COMPLETED) {
-                    System.out.println("Already Checked out.");
+                    System.out.println("Already checked out.");
                     return;
                 }
 
-                if (r.getInvoice() == null) {
-                    throw new IllegalStateException("No invoice found.");
-                }
+                if (r.getInvoice() == null)
+                    throw new IllegalStateException("No invoice found for this reservation.");
 
                 double total = r.getInvoice().calculateTotal();
-                System.out.println("Guest must pay " + total);
+                System.out.println("Total amount due: $" + total);
 
-                if (r.getGuest().getBalance() < total) {
-                    throw new InvalidPaymentException("Guest Balance is insufficient.");
-                }
-
+                if (r.getGuest().getBalance() < total)
+                    throw new InvalidPaymentException("Guest balance is insufficient.");
 
                 r.getGuest().setBalance(r.getGuest().getBalance() - total);
-
-
                 r.getInvoice().pay(method);
 
-                System.out.println("Payment Successful. Awaiting Receptionist Approval");
-
+                System.out.println("Payment successful. Awaiting receptionist approval.");
                 return;
             }
         }
+
+        System.out.println("No reservation found for room number " + roomNumber + ".");
     }
 
-     @Override
-    public String toString(){
-        return "Guest {" +
-                "username: " + username +
-                ", dateOfBirth: " + dateOfBirth +
-                ", balance: " + balance +
-                ", address: " + address +
-                ", gender: " + gender +
-                "Reservations: " + reservations.size() +
+    private void validateDate(LocalDate d) {
+        if (d == null)
+            throw new IllegalArgumentException("Date cannot be null");
+        if (d.isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("Date cannot be in the past");
+    }
+
+    private void validateRange(LocalDate in, LocalDate out) {
+        if (out.isBefore(in))
+            throw new IllegalArgumentException("Check-out cannot be before check-in");
+    }
+
+    @Override
+    public String toString() {
+        return "Guest{" +
+                "username='" + username + '\'' +
+                ", balance=" + balance +
+                ", address='" + address + '\'' +
+                ", gender=" + gender +
+                ", reservations=" + reservations.size() +
                 '}';
-
-
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -14,39 +14,39 @@ public class RoomType {
         HotelDatabase.roomTypes.add(this);
     }
 
-    public RoomType(String type, int capacity, double price){
-        numofroomtypes ++;
+    public RoomType(String type, int capacity, double price) {
+        numofroomtypes++;
         this.roomTypeId = numofroomtypes;
         setCategory(type);
-        setCapacity(capacity);
+        if (this.capacity == 0)  // only set manually if setCategory didn't auto-assign it
+            setCapacity(capacity);
         setBasePrice(price);
         HotelDatabase.roomTypes.add(this);
-
     }
 
     public String getCategory(){return category;}
 
-     public void setCategory(String type) {
-    if (type == null || type.trim().isEmpty()) {
-        throw new IllegalArgumentException("Room type cannot be empty");
+    public void setCategory(String type) {
+        if (type == null || type.trim().isEmpty())
+            throw new IllegalArgumentException("Room type cannot be empty");
+        if (!type.matches("[a-zA-Z ]+"))
+            throw new IllegalArgumentException("Category must contain letters only");
+        for (RoomType rt : HotelDatabase.roomTypes) {
+            if (rt.getCategory() != null && rt.getCategory().equalsIgnoreCase(type))
+                throw new IllegalArgumentException("Room type category already exists");
+        }
+        this.category = type;
+        if (type.equalsIgnoreCase("Single")) {
+            this.capacity = 1;
+            System.out.println("Category is Single, capacity automatically set to 1");
+        } else if (type.equalsIgnoreCase("Double")) {
+            this.capacity = 2;
+            System.out.println("Category is Double, capacity automatically set to 2");
+        } else if (type.equalsIgnoreCase("Triple")) {
+            this.capacity = 3;
+            System.out.println("Category is Triple, capacity automatically set to 3");
+        }
     }
-    if (!type.matches("[a-zA-Z ]+")) {
-        throw new IllegalArgumentException("Category must contain letters only");
-    }
-
-    this.category = type;
-
-    if (type.equalsIgnoreCase("Single")) {
-        this.capacity = 1;
-        System.out.println("Category is Single, Capacity is automatically set to 1");
-    } else if (type.equalsIgnoreCase("Double")) {
-        this.capacity = 2;
-        System.out.println("Category is Double, Capacity is automatically set to 2");
-    } else if (type.equalsIgnoreCase("Triple")) {
-        this.capacity = 3;
-        System.out.println("Category is Triple, Capacity is automatically set to 3");
-    }
-}
 
     public void setCapacity(int capacity) {
         if (capacity <= 0) {
