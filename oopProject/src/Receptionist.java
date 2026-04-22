@@ -8,128 +8,90 @@ public class Receptionist extends Staff {
         HotelDatabase.receptionists.add(this);
     }
 
-    public void viewReservations(int reservationId) {
-        boolean found =false;
 
-
-        for (Reservation r : HotelDatabase.reservations) {
-
-            if (r.getID() == reservationId) {
-                found =true;
-
-                System.out.println("\nReservation ID: " + r.getID());
-                System.out.println("Guest username: " + r.getGuest().getUsername());
-                System.out.println("Room Number: " + r.getRoom().getRoomNumber());
-                System.out.println("Checkin: " + r.getCheckin());
-                System.out.println("Checkout: " + r.getCheckout());
-                System.out.println("Status: " + r.getStatus());
-                System.out.println("Duration : " + r.getDuration() + "\n");
-
-                return;
-            }
-
-
-        }
-        if (!found) System.out.println("Reservation not found");
-    }
-
-
-
-
-    /*public void completeReservation(int reservationId) {
-
+    public void checkIn(int reservationId) {
         for (Reservation r : HotelDatabase.reservations) {
 
             if (r.getID() == reservationId) {
 
                 if (r.getStatus() == ReservationStatus.CANCELLED) {
-                    System.out.println("Cannot complete a cancelled reservation");
+                    System.out.println("Cannot check in a cancelled reservation.");
+                    return;
+                }
+
+                if (r.getStatus() == ReservationStatus.COMPLETED) {
+                    System.out.println("This reservation is already completed.");
+                    return;
+                }
+
+                if (r.getStatus() == ReservationStatus.CHECKED_IN) {
+                    System.out.println("Guest already checked in.");
                     return;
                 }
 
                 if (r.getStatus() != ReservationStatus.CONFIRMED) {
-                    System.out.println("Reservation must be CONFIRMED first");
+                    System.out.println("Reservation must be CONFIRMED before check-in.");
                     return;
                 }
 
-                r.complete();
-                System.out.println("Reservation COMPLETED");
-                return;
-            }
-        }
-
-        System.out.println("Reservation not found");
-    }*/
-
-
-
-
-    public void checkIn(int roomnumber ){
-        for (Reservation r : HotelDatabase.reservations) {
-
-            if (r.getRoom().getRoomNumber() == roomnumber) {
-
-                if (r.getStatus() != ReservationStatus.CONFIRMED) {
-                    System.out.println(" Reservation not confirmed yet");
-                    return;
-                }
-
-                r.getRoom().setAvailable(false);
-                for (int i=0; i<r.getRequired_amenities().size(); i++){
+                // Add amenities guest chose during reservation
+                for (int i = 0; i < r.getRequired_amenities().size(); i++) {
                     r.getRoom().addAmenity(r.getRequired_amenities().get(i));
                 }
 
-                System.out.println("Guest checked in");
+
+                r.getRoom().setAvailable(false);
+                r.setStatus(ReservationStatus.CHECKED_IN);
+                System.out.println("Guest checked in successfully.");
                 return;
             }
         }
-
-        System.out.println("Reservation not found");
+        System.out.println("No reservation found with this ID.");
     }
 
 
-    public void checkoutGuest(int roomNumber) {
 
+
+    public void checkoutGuest(int reservationId) {
         for (Reservation r : HotelDatabase.reservations) {
 
-            if (r.getRoom().getRoomNumber() == roomNumber) {
+            if (r.getID() == reservationId) {
 
-                // Already checked out
                 if (r.getStatus() == ReservationStatus.COMPLETED) {
                     System.out.println("Guest already checked out.");
                     return;
                 }
 
-                // Make sure reservation is active
                 if (r.getStatus() == ReservationStatus.CANCELLED) {
-                    System.out.println("Reservation is cancelled.");
+                    System.out.println("Cannot checkout a cancelled reservation.");
+                    return;
+                }
+
+                if (r.getStatus() != ReservationStatus.CHECKED_IN) {
+                    System.out.println("Guest has not checked in yet.");
                     return;
                 }
 
                 // Check payment
-                if (r.getInvoice() == null || !r.getInvoice().getPaid()) {
-                    System.out.println("Payment not completed yet.");
+                if (r.getInvoice() == null) {
+                    System.out.println("No invoice found for this reservation.");
+                    return;
+                }
+
+                if (!r.getInvoice().getPaid()) {
+                    System.out.println("Payment not completed. Cannot checkout.");
                     return;
                 }
 
                 // Finalize checkout
                 r.setStatus(ReservationStatus.COMPLETED);
                 r.getRoom().setAvailable(true);
-                r.getRoom().getAmenities().clear();
-
-                System.out.println("Checkout confirmed. Room is now available.");
-
+                r.getRoom().getAmenities().clear();  // remove amenities added at checkIn
+                System.out.println("Checkout successful. Room is now available.");
                 return;
             }
         }
-
-        System.out.println("No reservation found for this room.");
+        System.out.println("No reservation found with this ID.");
     }
 
-
-
-    }
- 
-
-
-
+}
