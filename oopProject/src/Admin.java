@@ -1,29 +1,27 @@
 import java.time.LocalDate;
+
 public class Admin extends Staff {
 
     public Admin(String username, String password, LocalDate dateOfBirth, int workingHours) {
         super(username, password, dateOfBirth, Role.ADMIN, workingHours);
 
     }
-public Admin(){
-    super();
-}
 
     //add room
-    public void addRoom(int roomNumber, double price, boolean isAvailable, RoomCategory roomcategory, int capacity, double basePrice, int roomTypeId) {
+    public void addRoom(int roomNumber, RoomType type, boolean isAvailable, View view, int floor) {
 
-        RoomType type = new RoomType(roomcategory, capacity, roomTypeId);
+        for (Room r :HotelDatabase.rooms) {
+            if (r.getRoomNumber() == roomNumber) {
+                throw new IllegalArgumentException("Room number already exists");
+            }
+        }
 
-        Room newRoom = new Room();
-        newRoom.setRoomNumber(roomNumber);
-        newRoom.setPrice(price);
-        newRoom.setAvailable(isAvailable);
-        newRoom.setType(type);
 
-        HotelDatabase.rooms.add(newRoom);
-
-        System.out.println("Room " + roomNumber + " added successfully!");
+        Room room = new Room(roomNumber, type, isAvailable, view, floor);
+              HotelDatabase.rooms.add(room);
+            System.out.println("Room added successfully " );
     }
+
 
 
     //view room
@@ -32,56 +30,219 @@ public Admin(){
             if (r.getRoomNumber() == roomNumber) {
 
 
+                System.out.println(r);
+
+                //print amenities in the room
+                System.out.println("Amenities:");
+                if (r.getAmenities() != null && !r.getAmenities().isEmpty()) {
+
+                    for (Amenity a : r.getAmenities()) {
+                        System.out.println("- " + a.getName()
+                                + "  Price: " + a.getPrice());
+                    }
+
+                } else {
+                    System.out.println("No amenities available");
+                }
+                    return;
             }
         }
         System.out.println("Room not found");
     }
 
 
-    //update room
-    public void updateRoom(int roomnumber, double newPrice, boolean isAvailable, int roomTypeId, RoomCategory roomcategory, int capacity, double basePrice) {
+    // update room
+    public void updateRoom(int roomNumber, Integer newRoomNumber, RoomType type, Boolean isAvailable, Double price) {
+
+        // check new room number doesn't already exist
+        if (newRoomNumber != null) {
+            for (Room r : HotelDatabase.rooms) {
+                if (r.getRoomNumber() == newRoomNumber) {
+                    throw new IllegalArgumentException("Room number " + newRoomNumber + " already exists");
+                }
+            }
+        }
         for (Room r : HotelDatabase.rooms) {
-            if (r.getRoomNumber() == roomnumber) {
-
-                r.setPrice(newPrice);
-                r.setAvailable(isAvailable);
-                r.getType().setroomTypeId(roomTypeId);
-                r.getType().setRoomCategory(roomcategory);
-                r.getType().setCapacity(capacity);
-                r.getType().getRoomCategory().setBasePrice(basePrice);
-
-
+            if (r.getRoomNumber() == roomNumber) {
+                if (newRoomNumber != null)   r.setRoomNumber(newRoomNumber);
+                if (type != null)            r.setType(type);
+                if (isAvailable != null)     r.setAvailable(isAvailable);
+                if (price != null)           r.setPrice(price);
                 System.out.println("Room updated successfully");
                 return;
             }
         }
         System.out.println("Room not found");
-
     }
 
 
-    //delete room
-    public void deleteRoom(int roomnumber) {
-        for (int i = 0; i < HotelDatabase.rooms.size(); i++) {
-            if (HotelDatabase.rooms.get(i).getRoomNumber()  == roomnumber){
-                HotelDatabase.rooms.remove(i);
-                System.out.println(" Room deleted successfully");
-                return;
-            }
 
+    //update room number only
+    public void updateRoomNumber(int roomNumber, int newRoomNumber) {
+        updateRoom(roomNumber, newRoomNumber, null, null, null);
+    }
+
+
+    //  update type only
+    public void updateRoom(int roomNumber, RoomType type) {
+        updateRoom(roomNumber, null, type, null, null);
+    }
+
+    // update availability only
+    public void updateRoom(int roomNumber, boolean isAvailable) {
+        updateRoom(roomNumber, null, null, isAvailable, null);
+    }
+
+
+
+    public void deleteRoom(int roomNumber) {
+        // check if room has active reservations first
+        for (Reservation res : HotelDatabase.reservations) {
+            if (res.getRoom().getRoomNumber() == roomNumber &&
+                    (res.getStatus() == ReservationStatus.PENDING ||
+                            res.getStatus() == ReservationStatus.CONFIRMED)) {
+                throw new IllegalStateException("Cannot delete room with active reservations");
+            }
         }
 
+        for (int i = 0; i < HotelDatabase.rooms.size(); i++) {
+            if (HotelDatabase.rooms.get(i).getRoomNumber() == roomNumber) {
+                HotelDatabase.rooms.remove(i);
+                System.out.println("Room deleted successfully");
+                return;
+            }
+        }
         System.out.println("Room not found");
-
     }
+
+
+
+
+    //Add Room Type
+    public void addRoomType(String category, int capacity, double price) {
+
+        RoomType type = new RoomType(category, capacity, price);
+
+        HotelDatabase.roomTypes.add(type);
+
+        System.out.println("RoomType added successfully!");
+    }
+
+
+
+    // view all room types
+    public void viewAllRoomTypes() {
+
+        if (HotelDatabase.roomTypes.isEmpty()) {
+            System.out.println("No Room Types found");
+            return;
+        }
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            System.out.println(t);
+        }
+    }
+
+
+
+    //view Room Type
+    public void viewRoomType(int roomTypeId) {
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+
+            if (t.getroomTypeId() == roomTypeId) {
+
+                System.out.println(t);
+
+                return;
+            }
+        }
+
+        System.out.println("Room type not found");
+    }
+
+
+
+    // update room type
+    public void updateRoomType(int roomTypeId, Integer newRoomTypeId, Integer newCapacity, Double newBasePrice) {
+
+        if (newRoomTypeId != null) {
+            for (RoomType t : HotelDatabase.roomTypes) {
+                if (t.getroomTypeId() == newRoomTypeId) {
+                    throw new IllegalArgumentException("RoomType ID already exists");
+                }
+            }
+        }
+
+        for (RoomType t : HotelDatabase.roomTypes) {
+            if (t.getroomTypeId() == roomTypeId) {
+                if (newRoomTypeId != null) t.setroomTypeId(newRoomTypeId);
+                if (newCapacity != null)   t.setCapacity(newCapacity);
+                if (newBasePrice != null)  t.setBasePrice(newBasePrice);
+                System.out.println("RoomType updated successfully");
+                return;
+            }
+        }
+        System.out.println("RoomType not found");
+    }
+
+    // update room type id only
+    public void updateRoomTypeId(int roomTypeId, int newRoomTypeId) {
+        updateRoomType(roomTypeId, newRoomTypeId, null, null);
+    }
+
+    //update capacity only
+    public void updateRoomType(int roomTypeId, int newCapacity) {
+        updateRoomType(roomTypeId, null, newCapacity, null);
+    }
+
+    // update base price only
+    public void updateRoomType(int roomTypeId, double newBasePrice) {
+        updateRoomType(roomTypeId, null, null, newBasePrice);
+    }
+
+
+
+    // Delete room type
+    public void deleteRoomType(int roomTypeId) {
+
+        // check if any room is using this type
+        for (Room r : HotelDatabase.rooms) {
+            if (r.getType().getroomTypeId() == roomTypeId) {
+                throw new IllegalStateException("Cannot delete room type that is assigned to a room");
+            }
+        }
+
+        for (int i = 0; i < HotelDatabase.roomTypes.size(); i++) {
+            if (HotelDatabase.roomTypes.get(i).getroomTypeId()  == roomTypeId) {
+
+                HotelDatabase.roomTypes.remove(i);
+                System.out.println("RoomType deleted successfully");
+                return;
+            }
+        }
+
+        System.out.println("RoomType not found");
+    }
+
 
 
 
     //Add Amenity
-    public void addAmenity(String name ,double  price ,int quantity) {
-        Amenity a = new Amenity(name , price , quantity );
-        HotelDatabase.amenities.add(a);
-        System.out.println("Amenity added: " + name);
+    public void addAmenity(String name ,double  price ) {
+
+        for (Amenity a : HotelDatabase.amenities) {
+            if (a.getName().equalsIgnoreCase(name)) {
+                System.out.println("Amenity already exists");
+                return;
+            }
+        }
+
+            Amenity a = new Amenity(name, price);
+            HotelDatabase.amenities.add(a);
+            System.out.println("Amenity added: " + name);
+
     }
 
 
@@ -92,13 +253,11 @@ public Admin(){
             return;
         }
 
-        System.out.println("\n========= ALL AMENITIES =========");
 
         for (Amenity a : HotelDatabase.amenities) {
-            System.out.println(a.getName() + "\t price: "+a.getPrice());
+            System.out.println(a);
 
         }
-        System.out.println("======================================= \n");
     }
 
 
@@ -117,6 +276,15 @@ public Admin(){
 
     //Delete Amenity
     public void deleteAmenity(String name) {
+        // check if amenity is used in any room first
+        for (Room r : HotelDatabase.rooms) {
+            for (Amenity a : r.getAmenities()) {
+                if (a.getName().equalsIgnoreCase(name)) {
+                    throw new IllegalStateException("Cannot delete amenity that is assigned to a room");
+                }
+            }
+        }
+
         for (int i = 0; i < HotelDatabase.amenities.size(); i++) {
             if (HotelDatabase.amenities.get(i).getName().equalsIgnoreCase(name)) {
                 HotelDatabase.amenities.remove(i);
@@ -127,6 +295,39 @@ public Admin(){
         System.out.println("Amenity not found");
     }
 
+
+    // add amenity to room
+    public void addAmenityToRoom(int roomNumber, String amenityName) {
+
+        for (Room r : HotelDatabase.rooms) {
+
+            if (r.getRoomNumber() == roomNumber) {
+
+                for (Amenity a : HotelDatabase.amenities) {
+
+                    if (a.getName().equalsIgnoreCase(amenityName)) {
+
+                        for (Amenity b : r.getAmenities()) {
+                            if (b.getName().equalsIgnoreCase(amenityName)) {
+                                System.out.println("Amenity already in room");
+                                return;
+                            }
+                        }
+
+                        r.addAmenity(a);
+
+                        System.out.println("Amenity added to room " + roomNumber);
+                        return;
+                    }
+                }
+
+                System.out.println("Amenity not found in system");
+                return;
+            }
+        }
+
+        System.out.println("Room not found");
+    }
 
     //view amenities in room
     public void viewAmenitiesInRoom(int roomNumber) {
@@ -143,7 +344,7 @@ public Admin(){
                 System.out.println(" \n Amenities in Room " + roomNumber + ":");
 
                 for (Amenity a : r.getAmenities()) {
-                    System.out.println("- " + a.getQuantity() + "\t"+ a.getName() + "\tprice: " + a.getTotalPrice() );
+                    System.out.println("- " + a.getName() + "\tprice: " + a.getPrice() );
                 }
                 System.out.println("\n");
                 return;
@@ -155,18 +356,17 @@ public Admin(){
     }
 
 
-
     //update amenity in room
-    public void updateAmenityInRoom(int roomNumber, String amenity, int newQuantity) {
+    public void updateAmenityInRoom(int roomNumber, String amenity , double newPrice) {
         for (Room r : HotelDatabase.rooms) {
             if (r.getRoomNumber() == roomNumber) {
 
                 for (Amenity a : r.getAmenities()) {
                     if (a.getName().equalsIgnoreCase(amenity)) {
 
-                        a.setQuantity(newQuantity);
+                        a.setPrice(newPrice);
 
-                        System.out.println("Amenity quantity updated in room");
+                        System.out.println("Amenity price updated in room");
                         return;
                     }
                 }
@@ -214,31 +414,18 @@ public Admin(){
     }
 
 
-    // add amenity to room
-    public void addAmenityToRoom(int roomNumber, String name , double price ,int quantity) {
-
-        for (Room r : HotelDatabase.rooms) {
-
-            if (r.getRoomNumber() == roomNumber) {
-
-                // check duplicate
-                for (Amenity a : r.getAmenities()) {
-                    if (a.getName().equalsIgnoreCase(name)) {
-                        a.setQuantity(a.getQuantity() + quantity);
-                        System.out.println( quantity + " " + name + " added successfully in room " + roomNumber);
-                        return;
-                    }
-                }
-
-                Amenity a = new Amenity(name , price , quantity );
-                r.getAmenities().add(a);
-
-                System.out.println( quantity + name + " added successfully in room " + roomNumber);
-                return;
-            }
-        }
-
-        System.out.println("Room not found");
-    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
