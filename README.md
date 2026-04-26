@@ -17,7 +17,7 @@ complete backend structure.
 ## Team Members
 | Name | Student ID | Contribution |
 |------|-----------|--------------|
-| Salma Kahaled Shafek | 25p0196 | Reservation, Invoice |
+| Salma Khaled Shafek | 25p0196 | Reservation, Invoice |
 | Mariam MohamedRamzy | 25p0129 | Guest, HotelDateBase |
 | Hala Emad Ali Abdelkawy | 25p0130 | Room, RoomType, Amenity |
 | Sara Ahmed Mostafa ElNahass | 25p0013 | Staff, Admin, Receptionist |
@@ -28,14 +28,14 @@ complete backend structure.
 ## How to Run
 1. Clone the repository
 2. Open in IntelliJ IDEA
-3. Navigate to src/main/java/com/hotel/Main.java
+3. Navigate to src/Main.java
 4. Right click Main.java → Run
 
 **Requirements:**
 - Java JDK 17 or higher
 - IntelliJ IDEA
 
-  ## Project Structure
+## Project Structure
   ---
 
 ## OOP Concepts Used
