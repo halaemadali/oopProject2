@@ -35,5 +35,56 @@ complete backend structure.
 - Java JDK 17 or higher
 - IntelliJ IDEA
 
+  ## Project Structure
+  ---
+
+## OOP Concepts Used
+- **Inheritance** — Admin and Receptionist extend Staff
+- **Abstraction** — Staff is an abstract class
+- **Encapsulation** — all fields are private with getters/setters
+- **Polymorphism** — Staff methods overridden in subclasses
+- **Interfaces** — Manageable and Payable define contracts
+- **Custom Exceptions** — meaningful error handling throughout
+
+---
+
+## Key Features
+**Guest:**
+- Register and login
+- Browse available rooms by type, view and dates
+- Make, view and cancel reservations
+- Select amenities for reservation
+- Checkout and pay invoice
+
+**Admin:**
+- Full CRUD on rooms, room types and amenities
+- Add amenities to rooms
+- Add receptionist accounts
+
+**Receptionist:**
+- View all guests, rooms and reservations
+- Confirm and cancel reservations
+- Check in and check out guests
+- Process payments
+
+---
+
+## Pre-loaded Test Data
+The system launches with dummy data for immediate testing:
+- 29 guests
+- 130 rooms
+- 4 room types (Single, Double, Triple, Suite)
+- 5 amenities (WiFi, TV, Mini Bar, Air Conditioning, Room Service)
+- 2 admins
+- 2 receptionists
+- 40 reservations
+
+**Test Credentials:**
+- Admin: username = `admin1` password = `admin123`
+- Receptionist: username = `receptionist1` password = `recep123`
+- Guest: username = `hana_hassan_0` password = `pass00`
+
+---
+
 ---
 
