@@ -288,6 +288,7 @@ public class Main {
                 case 3  -> rec.viewAllReservations();
                 case 4  -> rec.viewAllPendingReservations();
                 case 5  -> {
+                    rec.viewAllPendingReservations();
                     System.out.print("Reservation ID: ");
                     rec.confirmReservation(readInt());
                 }
