@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,6 +22,8 @@ public class LoginController implements Initializable {
 
     @FXML private TextField     loginUsernameField;
     @FXML private PasswordField loginPasswordField;
+    @FXML private TextField     loginPasswordVisible;
+    @FXML private CheckBox      showPasswordCheck;
     @FXML private Label         loginStatusLabel;
 
     @Override
@@ -31,13 +34,16 @@ public class LoginController implements Initializable {
     @FXML
     private void handleLogin() {
         String username = loginUsernameField.getText().trim();
-        String password = loginPasswordField.getText().trim();
+
+        // Get password from whichever field is visible
+        String password = loginPasswordField.isVisible()
+                ? loginPasswordField.getText().trim()
+                : loginPasswordVisible.getText().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
             showError("Please enter username and password.");
             return;
         }
-
 
         // Check Guests
         Guest guest = Guest.login(username, password);
@@ -64,6 +70,25 @@ public class LoginController implements Initializable {
         }
 
         showError("Invalid username or password.");
+    }
+
+    @FXML
+    private void handleShowPassword() {
+        if (showPasswordCheck.isSelected()) {
+            loginPasswordVisible.setText(loginPasswordField.getText());
+            loginPasswordVisible.setVisible(true);
+            loginPasswordField.setVisible(false);
+        } else {
+            loginPasswordField.setText(loginPasswordVisible.getText());
+            loginPasswordField.setVisible(true);
+            loginPasswordVisible.setVisible(false);
+        }
+    }
+
+    @FXML
+    private void handleClose() {
+        Stage stage = (Stage) loginUsernameField.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
@@ -97,15 +122,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void showError(String message) {
-        loginStatusLabel.setStyle("-fx-text-fill: #e76c3c; -fx-font-size: 13px;");
-        loginStatusLabel.setText(message);
-    }
-
-    private void showSuccess(String message) {
-        loginStatusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 13px;");
-        loginStatusLabel.setText(message);
-    }
     private void goToReceptionistDashboard(Receptionist receptionist) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -123,5 +139,15 @@ public class LoginController implements Initializable {
         } catch (Exception e) {
             showError("Navigation error: " + e.getMessage());
         }
+    }
+
+    private void showError(String message) {
+        loginStatusLabel.setStyle("-fx-text-fill: #e76c3c; -fx-font-size: 13px;");
+        loginStatusLabel.setText(message);
+    }
+
+    private void showSuccess(String message) {
+        loginStatusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 13px;");
+        loginStatusLabel.setText(message);
     }
 }
