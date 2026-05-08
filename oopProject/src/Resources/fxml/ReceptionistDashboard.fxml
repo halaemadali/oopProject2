@@ -38,7 +38,7 @@
                                 <Label text="🏨  Receptionist Dashboard"
                                        style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
                                 <Label text="Hotel Management System"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #aaaaaa;"/>
+                                       style="-fx-font-size: 12px; -fx-text-fill: #ffffff;"/>
                             </children>
                         </VBox>
 
@@ -47,15 +47,15 @@
                         <VBox alignment="CENTER_RIGHT" spacing="2.0">
                             <children>
                                 <Label text="Logged in as:"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #aaaaaa;"/>
+                                       style="-fx-font-size: 11px; -fx-text-fill: #ffffff;"/>
                                 <Label fx:id="lblReceptionist"
                                        text="—"
-                                       style="-fx-font-size: 14px; -fx-text-fill: #e06d67; -fx-font-weight: bold;"/>
+                                       style="-fx-font-size: 14px; -fx-text-fill: #ffffff; -fx-font-weight: bold;"/>
                             </children>
                         </VBox>
 
                         <Button text="Logout"
-                                styleClass="btn-secondary"
+                                styleClass="btn-secondary2"
                                 onAction="#handleLogout"
                                 prefHeight="34.0"/>
                     </children>
