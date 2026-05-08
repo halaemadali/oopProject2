@@ -1,129 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestDashboardController">
+<BorderPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #fff0f0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestDashboardController">
 
-    <!-- Header Section -->
-    <HBox spacing="20">
-        <VBox>
-            <Label fx:id="welcomeLabel" text="Welcome, Guest" />
-            <Label fx:id="memberSinceLabel" text="Membership Info" />
-        </VBox>
-        <Region HBox.hgrow="ALWAYS" />
-        <VBox alignment="CENTER_RIGHT">
-            <Label text="Current Balance" />
-            <Label fx:id="balanceLabel" text="0.00" />
-        </VBox>
-    </HBox>
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
 
-    <Separator />
+    <!-- TOP HEADER -->
+    <top>
+        <VBox alignment="CENTER" style="-fx-background-color: #2c2c2c;">
+            <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
 
-    <!-- Profile and Stats Section -->
-    <HBox spacing="50">
-        <!-- Profile Details -->
-        <VBox spacing="5">
-            <Label text="PROFILE DETAILS" />
-            <GridPane hgap="10" vgap="5">
-                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label fx:id="profileNameLabel" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                <Label text="Gender:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Label fx:id="profileGenderLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                <Label text="DOB:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Label fx:id="profileDobLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <Label fx:id="profileAddressLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-                <Label text="Gender Detail:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <Label fx:id="profileGenderDetailLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-                <Label text="Account Balance:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <Label fx:id="profileBalanceLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <columnConstraints>
-               <ColumnConstraints />
-               <ColumnConstraints />
-            </columnConstraints>
-            <rowConstraints>
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-            </rowConstraints>
-            </GridPane>
-        </VBox>
-
-        <!-- Statistics Counters -->
-        <VBox spacing="10">
-            <Label text="RESERVATION STATS" />
-            <HBox spacing="15">
-                <VBox alignment="CENTER">
-                    <Label text="Total" />
-                    <Label fx:id="totalResLabel" text="0" />
+            <HBox alignment="CENTER_LEFT" spacing="0">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label style="-fx-text-fill: #ffd1c9; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 2px;" text="🏨  HMS Hotel" />
+                    <Label fx:id="welcomeLabel" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome, Guest" />
+                    <Label fx:id="memberSinceLabel" style="-fx-text-fill: #ffe0d9; -fx-font-size: 12px;" text="Guest Account" />
                 </VBox>
-                <VBox alignment="CENTER">
-                    <Label text="Pending" />
-                    <Label fx:id="pendingResLabel" text="0" />
-                </VBox>
-                <VBox alignment="CENTER">
-                    <Label text="Confirmed" />
-                    <Label fx:id="confirmedResLabel" text="0" />
-                </VBox>
-                <VBox alignment="CENTER">
-                    <Label text="Cancelled" />
-                    <Label fx:id="cancelledResLabel" text="0" />
+
+                <VBox alignment="CENTER_RIGHT" spacing="8">
+                    <HBox alignment="CENTER" spacing="6" style="-fx-background-color: rgba(255,255,255,0.18); -fx-background-radius: 20; -fx-padding: 8 18 8 18;">
+                        <Label style="-fx-font-size: 14px;" text="💰" />
+                        <Label fx:id="balanceLabel" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="0.00" />
+                        <Label style="-fx-text-fill: #ffe0d9; -fx-font-size: 11px;" text="Balance" />
+                    </HBox>
+                    <Button onAction="#handleLogout" styleClass="btn-secondary" text="← Logout" />
                 </VBox>
             </HBox>
         </VBox>
-    </HBox>
+    </top>
 
-    <Separator />
+    <!-- CENTER -->
+    <center>
+        <HBox spacing="20" style="-fx-background-color: #fff0f0;">
+            <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
 
-    <!-- Reservations Table -->
-    <VBox spacing="10" VBox.vgrow="ALWAYS">
-        <HBox spacing="10">
-            <Label text="Active Reservations" />
-            <Label fx:id="resCountLabel" text="(0 records)" />
-        </HBox>
+            <!-- Profile Card -->
+            <VBox prefWidth="240" spacing="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(192, 57, 43, 0.15), 12, 0, 0, 3);">
 
-        <!-- Table Header -->
-        <HBox spacing="10">
-            <Label prefWidth="50" text="ID" />
-            <Label prefWidth="70" text="Room" />
-            <Label prefWidth="80" text="Type" />
-            <Label prefWidth="110" text="Check-In" />
-            <Label prefWidth="110" text="Check-Out" />
-            <Label prefWidth="100" text="Status" />
-            <Label text="Total" />
-        </HBox>
+                <VBox alignment="CENTER" spacing="6" style="-fx-background-color: #e06d67; -fx-background-radius: 10 10 0 0; -fx-padding: 20 16 20 16;">
+                    <StackPane style="-fx-background-color: #ff6b5e; -fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60;">
+                        <Label style="-fx-font-size: 26px; -fx-text-fill: white;" text="👤" />
+                    </StackPane>
+                    <Label fx:id="profileNameLabel" style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;" text="Username" />
+                    <Label fx:id="profileGenderLabel" style="-fx-text-fill: #ffe0d9; -fx-font-size: 11px;" text="—" />
+                </VBox>
 
-        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-            <VBox fx:id="reservationRowsContainer" spacing="2">
-                <!-- Rows dynamically added by controller -->
-                <Label fx:id="noReservationsLabel" text="No active reservations found." />
+                <VBox spacing="0" style="-fx-padding: 0;">
+                    <VBox spacing="2" styleClass="profile-row">
+                        <Label styleClass="profile-key" text="DATE OF BIRTH" />
+                        <Label fx:id="profileDobLabel" styleClass="profile-value" text="—" />
+                    </VBox>
+                    <Separator />
+
+                    <VBox spacing="2" styleClass="profile-row">
+                        <Label styleClass="profile-key" text="ADDRESS" />
+                        <Label fx:id="profileAddressLabel" styleClass="profile-value" text="—" wrapText="true" />
+                    </VBox>
+                    <Separator />
+
+                    <VBox spacing="2" styleClass="profile-row">
+                        <Label styleClass="profile-key" text="GENDER" />
+                        <Label fx:id="profileGenderDetailLabel" styleClass="profile-value" text="—" />
+                    </VBox>
+                    <Separator />
+
+                    <VBox spacing="2" styleClass="profile-row">
+                        <Label styleClass="profile-key" text="ACCOUNT BALANCE" />
+                        <Label fx:id="profileBalanceLabel" styleClass="profile-balance-value" text="0.00" />
+                    </VBox>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <VBox style="-fx-padding: 16;">
+                    <Button maxWidth="Infinity" onAction="#handleMakeReservation" prefHeight="38" styleClass="btn-main" text="➕  Manage Reservations" />
+                </VBox>
             </VBox>
-        </ScrollPane>
-    </VBox>
 
-    <!-- Navigation Buttons & Status -->
-    <HBox alignment="CENTER_RIGHT" spacing="10">
-        <Label fx:id="statusLabel" text="System Ready" />
-        <Region HBox.hgrow="ALWAYS" />
-        <Button onAction="#handleMakeReservation" text="Manage Reservation" />
-        <Button onAction="#handleLogout" text="Logout" />
-    </HBox>
+            <!-- Reservations Section -->
+            <VBox spacing="16" HBox.hgrow="ALWAYS">
 
-</VBox>
+                <!-- Stats Cards -->
+                <HBox spacing="14">
+                    <VBox alignment="CENTER" spacing="4" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="📋" />
+                        <Label fx:id="totalResLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="Total Reservations" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="4" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="⏳" />
+                        <Label fx:id="pendingResLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="Pending" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="4" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="✅" />
+                        <Label fx:id="confirmedResLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="Confirmed" />
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="4" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-size: 22px;" text="❌" />
+                        <Label fx:id="cancelledResLabel" styleClass="stat-number" text="0" />
+                        <Label styleClass="stat-label" text="Cancelled" />
+                    </VBox>
+                </HBox>
+
+                <!-- Active Reservations -->
+                <VBox spacing="10" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(192, 57, 43, 0.12), 12, 0, 0, 3); -fx-padding: 20;" VBox.vgrow="ALWAYS">
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #c0392b;" text="Active Reservations" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="resCountLabel" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px;" text="0 records" />
+                    </HBox>
+
+                    <Separator />
+
+                    <HBox spacing="0" styleClass="table-header">
+                        <Label prefWidth="50" styleClass="table-header-cell" text="ID" />
+                        <Label prefWidth="70" styleClass="table-header-cell" text="Room" />
+                        <Label prefWidth="80" styleClass="table-header-cell" text="Type" />
+                        <Label prefWidth="110" styleClass="table-header-cell" text="Check-In" />
+                        <Label prefWidth="110" styleClass="table-header-cell" text="Check-Out" />
+                        <Label prefWidth="100" styleClass="table-header-cell" text="Status" />
+                        <Label styleClass="table-header-cell" text="Total" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="reservationRowsContainer" spacing="2" />
+                    </ScrollPane>
+
+                    <Label fx:id="noReservationsLabel" alignment="CENTER" maxWidth="Infinity" style="-fx-text-fill: #95a5a6; -fx-font-size: 13px; -fx-font-style: italic;" text="No active reservations found." />
+                </VBox>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- BOTTOM BAR -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #ffe6e0; -fx-border-color: #e74c3c; -fx-border-width: 1 0 0 0; -fx-padding: 10 24 10 24;">
+            <Label style="-fx-font-size: 12px;" text="🏨" />
+            <Label style="-fx-text-fill: #c0392b; -fx-font-size: 11px;" text="HMS Hotel Management System" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;" text="" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
