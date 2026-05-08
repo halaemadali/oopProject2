@@ -218,7 +218,7 @@ public class CheckoutController implements Initializable {
     public void handleBack() throws Exception {
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/Resources/fxml/GuestDashboard.fxml")
+                getClass().getResource("/Resources/fxml/GuestDashboard.fxml.fxml")
         );
         Parent root = loader.load();
 

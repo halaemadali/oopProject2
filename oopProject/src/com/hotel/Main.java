@@ -1,8 +1,6 @@
 package com.hotel;
 
-import com.hotel.controllers.ReservationController;
 import com.hotel.database.HotelDatabase;
-import com.hotel.models.Guest;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,27 +12,30 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        // 1. Initialize the database — rooms, guests, amenities etc.
+        // 1. Initialize your data first so logins can be validated
         HotelDatabase.initializeData();
 
-        // 2. Grab an existing guest from the database to test with
-        Guest testGuest = HotelDatabase.guests.get(0);
-        System.out.println("Testing with guest: " + testGuest.getUsername());
+        try {
+            // 2. Load the Login Screen FXML
+            // Make sure this path matches your folder structure exactly
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/Resources/fxml/LoginScreen.fxml")
+            );
+            Parent root = loader.load();
 
-        // 3. Load the reservation screen directly (no login needed yet)
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/Resources/fxml/ReservationScreen.fxml")
-        );
-        Parent root = loader.load();
+            // 3. Set up the stage
+            stage.setScene(new Scene(root));
+            stage.setTitle("Hotel Management System - Login");
 
-        // 4. Inject the guest into the controller
-        ReservationController ctrl = loader.getController();
-        ctrl.setGuest(testGuest);
+            // Optional: Prevent the window from being too small
+            stage.setResizable(false);
 
-        // 5. Show the window
-        stage.setScene(new Scene(root));
-        stage.setTitle("Hotel Reservation System");
-        stage.show();
+            stage.show();
+
+        } catch (Exception e) {
+            System.err.println("Failed to load Login Screen:");
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

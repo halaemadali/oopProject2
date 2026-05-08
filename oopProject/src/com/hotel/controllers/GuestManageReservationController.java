@@ -13,83 +13,80 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GuestManageReservationController implements Initializable {
-    @FXML
-    private Label welcomeLabel;                          // fx:id="welcomeLabel"
-    @FXML private TableView<Reservation> ReservationsTable;    // fx:id="ReservationsTable"
-    @FXML private TableColumn<Reservation, String> colId;      // fx:id="colId"
-    @FXML private TableColumn<Reservation, String> colRoom;    // fx:id="colRoom"
-    @FXML private TableColumn<Reservation, String> colType;    // fx:id="colType"
-    @FXML private TableColumn<Reservation, String> colCheckin; // fx:id="colCheckin"
-    @FXML private TableColumn<Reservation, String> colCheckout;// fx:id="colCheckout"
-    @FXML private TableColumn<Reservation, String> colStatus;  // fx:id="colStatus"
+
+    @FXML private Label guestTagLabel;
+    @FXML private TableView<Reservation> ReservationsTable;
+    @FXML private TableColumn<Reservation, String> colId;
+    @FXML private TableColumn<Reservation, String> colRoom;
+    @FXML private TableColumn<Reservation, String> colType;
+    @FXML private TableColumn<Reservation, String> colCheckin;
+    @FXML private TableColumn<Reservation, String> colCheckout;
+    @FXML private TableColumn<Reservation, String> colStatus;
 
     private Guest currentGuest;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        colId.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        String.valueOf(c.getValue().getID())));
-
-        colRoom.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        String.valueOf(c.getValue().getRoom().getRoomNumber())));
-
-        colType.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        c.getValue().getRoom().getType().getCategory()));
-
-        colCheckin.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        String.valueOf(c.getValue().getCheckin())));
-
-        colCheckout.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        String.valueOf(c.getValue().getCheckout())));
-
-        colStatus.setCellValueFactory(c ->
-                new SimpleStringProperty(
-                        String.valueOf(c.getValue().getStatus())));
+        colId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getID())));
+        colRoom.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getRoom().getRoomNumber())));
+        colType.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getRoom().getType().getCategory()));
+        colCheckin.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getCheckin())));
+        colCheckout.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getCheckout())));
+        colStatus.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getStatus())));
     }
 
     public void setGuest(Guest g) {
         this.currentGuest = g;
-        welcomeLabel.setText("Welcome,  " + g.getUsername());
+        if (guestTagLabel != null) {
+            guestTagLabel.setText(g.getUsername());
+        }
         refreshTable();
     }
 
     private void refreshTable() {
-        ReservationsTable.getItems().setAll(currentGuest.getReservations());
+        if (currentGuest != null && currentGuest.getReservations() != null) {
+            ReservationsTable.getItems().setAll(currentGuest.getReservations());
+        }
     }
 
     @FXML
     private void handleGoToCancel() throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/Resources/fxml/CancelReservationScreen.fxml"));
-        Parent root = loader.load();
-        CancelReservationController next = loader.getController();
-        next.setGuest(currentGuest);
-        ((Stage) welcomeLabel.getScene().getWindow())
-                .setScene(new Scene(root));
+        navigateTo("/Resources/fxml/CancelReservationScreen.fxml", "Cancel Reservation");
     }
 
     @FXML
     private void handleMakeReservation() throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/Resources/fxml/ReservationScreen.fxml"));
-        Parent root = loader.load();
-        ReservationController next = loader.getController();
-        next.setGuest(currentGuest);
-        ((Stage) welcomeLabel.getScene().getWindow())
-                .setScene(new Scene(root));
+        navigateTo("/Resources/fxml/ReservationScreen.fxml", "Make Reservation");
     }
+
     @FXML
-    private void handleBack() {
-        // placeholder until main menu is built
-        System.out.println("Main menu not built yet");
+    private void handleBack() throws IOException {
+        navigateTo("/Resources/fxml/GuestDashboard.fxml", "Guest Dashboard");
+    }
+
+    @FXML
+    private void handleCheckout() throws IOException {
+        navigateTo("/Resources/fxml/CheckoutScreen.fxml", "Checkout");
+    }
+
+    private void navigateTo(String fxmlPath, String title) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        Parent root = loader.load();
+
+        Object controller = loader.getController();
+        try {
+            controller.getClass().getMethod("setGuest", Guest.class).invoke(controller, currentGuest);
+        } catch (Exception e) {
+
+        }
+
+        Stage stage = (Stage) ReservationsTable.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setTitle(title);
     }
 }

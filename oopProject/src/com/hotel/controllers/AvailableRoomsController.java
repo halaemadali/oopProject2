@@ -125,6 +125,7 @@ public class AvailableRoomsController implements Initializable {
                             "  |  Total: $" + total +
                             "  |  Status: PENDING"
             );
+            redirectToManageReservations();
 
         } catch (Exception e) {
             statusLabel.setText("Booking failed: " + e.getMessage());
@@ -140,7 +141,6 @@ public class AvailableRoomsController implements Initializable {
             );
             Parent root = loader.load();
 
-            // Passing the guest back to the reservation screen
             ReservationController prev = loader.getController();
             prev.setGuest(currentGuest);
 
@@ -149,6 +149,23 @@ public class AvailableRoomsController implements Initializable {
 
         } catch (Exception e) {
             statusLabel.setText("Navigation error: " + e.getMessage());
+        }
+    }
+
+    private void redirectToManageReservations() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/Resources/fxml/ManageReservationScreen.fxml")
+            );
+            Parent root = loader.load();
+            GuestManageReservationController next = loader.getController();
+            next.setGuest(currentGuest);
+            Stage stage = (Stage) statusLabel.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Hotel – My Reservations");
+
+        } catch (Exception e) {
+            statusLabel.setText("Error redirecting: " + e.getMessage());
         }
     }
 }

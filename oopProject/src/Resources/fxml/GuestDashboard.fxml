@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestDashboardController">
+
+    <!-- Header Section -->
+    <HBox spacing="20">
+        <VBox>
+            <Label fx:id="welcomeLabel" text="Welcome, Guest" />
+            <Label fx:id="memberSinceLabel" text="Membership Info" />
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <VBox alignment="CENTER_RIGHT">
+            <Label text="Current Balance" />
+            <Label fx:id="balanceLabel" text="0.00" />
+        </VBox>
+    </HBox>
+
+    <Separator />
+
+    <!-- Profile and Stats Section -->
+    <HBox spacing="50">
+        <!-- Profile Details -->
+        <VBox spacing="5">
+            <Label text="PROFILE DETAILS" />
+            <GridPane hgap="10" vgap="5">
+                <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label fx:id="profileNameLabel" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Gender:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label fx:id="profileGenderLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="DOB:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label fx:id="profileDobLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Label fx:id="profileAddressLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <Label text="Gender Detail:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Label fx:id="profileGenderDetailLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                <Label text="Account Balance:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <Label fx:id="profileBalanceLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <columnConstraints>
+               <ColumnConstraints />
+               <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+            </GridPane>
+        </VBox>
+
+        <!-- Statistics Counters -->
+        <VBox spacing="10">
+            <Label text="RESERVATION STATS" />
+            <HBox spacing="15">
+                <VBox alignment="CENTER">
+                    <Label text="Total" />
+                    <Label fx:id="totalResLabel" text="0" />
+                </VBox>
+                <VBox alignment="CENTER">
+                    <Label text="Pending" />
+                    <Label fx:id="pendingResLabel" text="0" />
+                </VBox>
+                <VBox alignment="CENTER">
+                    <Label text="Confirmed" />
+                    <Label fx:id="confirmedResLabel" text="0" />
+                </VBox>
+                <VBox alignment="CENTER">
+                    <Label text="Cancelled" />
+                    <Label fx:id="cancelledResLabel" text="0" />
+                </VBox>
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <Separator />
+
+    <!-- Reservations Table -->
+    <VBox spacing="10" VBox.vgrow="ALWAYS">
+        <HBox spacing="10">
+            <Label text="Active Reservations" />
+            <Label fx:id="resCountLabel" text="(0 records)" />
+        </HBox>
+
+        <!-- Table Header -->
+        <HBox spacing="10">
+            <Label prefWidth="50" text="ID" />
+            <Label prefWidth="70" text="Room" />
+            <Label prefWidth="80" text="Type" />
+            <Label prefWidth="110" text="Check-In" />
+            <Label prefWidth="110" text="Check-Out" />
+            <Label prefWidth="100" text="Status" />
+            <Label text="Total" />
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+            <VBox fx:id="reservationRowsContainer" spacing="2">
+                <!-- Rows dynamically added by controller -->
+                <Label fx:id="noReservationsLabel" text="No active reservations found." />
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+    <!-- Navigation Buttons & Status -->
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+        <Label fx:id="statusLabel" text="System Ready" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#handleMakeReservation" text="Manage Reservation" />
+        <Button onAction="#handleLogout" text="Logout" />
+    </HBox>
+
+</VBox>

@@ -29,6 +29,7 @@ public class CancelReservationController implements Initializable {
     @FXML private TableColumn<Reservation, String> colCheckin; // fx:id="colCheckin"
     @FXML private TableColumn<Reservation, String> colCheckout;// fx:id="colCheckout"
     @FXML private TableColumn<Reservation, String> colStatus;  // fx:id="colStatus"
+    @FXML private Label guestTagLabel;
     private Guest currentGuest ;
 
     public Guest getGuest(){
@@ -36,7 +37,7 @@ public class CancelReservationController implements Initializable {
     }
     public void setGuest(Guest g) {
         this.currentGuest = g;
-        welcomeLabel.setText("Welcome,  " + g.getUsername());
+        if (guestTagLabel != null) guestTagLabel.setText(g.getUsername());
 
         List<Reservation> cancellable = new ArrayList<>();
         for (Reservation r : g.getReservations()) {
@@ -101,12 +102,13 @@ public class CancelReservationController implements Initializable {
     @FXML
     private void handleBack() throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(
-                        "/Resources/fxml/ReservationManagerScreen.fxml"));
+                getClass().getResource("/Resources/fxml/ManageReservationScreen.fxml"));
+
         Parent root = loader.load();
         GuestManageReservationController prev = loader.getController();
         prev.setGuest(currentGuest);
-        ((Stage) statusLabel.getScene().getWindow())
-                .setScene(new Scene(root));
+
+        Stage stage = (Stage) statusLabel.getScene().getWindow();
+        stage.setScene(new Scene(root));
     }
 }

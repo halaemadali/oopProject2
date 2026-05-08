@@ -48,7 +48,7 @@ public class LoginController implements Initializable {
         // Check Guests
         Guest guest = Guest.login(username, password);
         if (guest != null) {
-            goToReservation(guest);
+            goToGuestDashboard(guest);
             return;
         }
 
@@ -105,18 +105,18 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void goToReservation(Guest guest) {
+    private void goToGuestDashboard(Guest guest) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/Resources/fxml/ReservationScreen.fxml")
+                    getClass().getResource("/Resources/fxml/GuestDashboard.fxml")
             );
             Parent root = loader.load();
-            ReservationController ctrl = loader.getController();
+            GuestDashboardController ctrl = loader.getController();
             ctrl.setGuest(guest);
 
             Stage stage = (Stage) loginUsernameField.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Hotel – Reservations");
+            stage.setTitle("Guest Dashboard");
         } catch (Exception e) {
             showError("Navigation error: " + e.getMessage());
         }

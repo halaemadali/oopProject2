@@ -8,28 +8,39 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane fx:id="WelcomeLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.ManageReservationController">
+<BorderPane fx:id="WelcomeLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestManageReservationController">
    <top>
-      <VBox prefHeight="95.0" prefWidth="800.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="760.0" text="Manage Reservations" textFill="#f4f2f2">
-               <font>
-                  <Font name="System Bold" size="34.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Welcome" textFill="#bdc3c7">
-               <font>
-                  <Font name="System Italic" size="22.0" />
-               </font>
-            </Label>
-         </children>
+      <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c2c2c;">
          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
-      </VBox>
+         <children>
+            
+            <Region HBox.hgrow="ALWAYS" />
+
+            <VBox alignment="CENTER" spacing="4.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="40.0" prefWidth="683.0" style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;" text="           Manage Reservations" />
+                  <Label style="-fx-text-fill: #bdc3c7; -fx-font-size: 13px;" />
+               </children>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Guest tag top-right -->
+            <VBox alignment="CENTER_RIGHT" prefHeight="63.0" prefWidth="107.0" spacing="2.0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #aaaaaa;" text="Logged in as:" />
+                  <Label fx:id="guestTagLabel" style="-fx-font-size: 14px; -fx-text-fill: #e06d67; -fx-font-weight: bold;" text="—" />
+               </children>
+            </VBox>
+
+         </children>
+      </HBox>
    </top>
    <center>
       <VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="160.0" spacing="12.0" BorderPane.alignment="CENTER">
@@ -60,9 +71,10 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </padding>
                <children>
-                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="38.0" prefWidth="160.0" text="← Main Menu" />
-                  <Button fx:id="makeReservationButton" layoutX="25.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleMakeReservation" prefHeight="38.0" prefWidth="200.0" text="Make Reservation" />
-                  <Button fx:id="cancelReservationButton" layoutX="201.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleGoToCancel" prefHeight="38.0" prefWidth="200.0" text="Cancel Reservation" />
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" prefHeight="38.0" prefWidth="160.0" styleClass="btn-secondary" stylesheets="@styles.css" text="← Main Menu" />
+                  <Button fx:id="makeReservationButton" layoutX="25.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleMakeReservation" prefHeight="38.0" prefWidth="200.0" styleClass="btn-main" stylesheets="@styles.css" text="Make Reservation" />
+                  <Button fx:id="cancelReservationButton" layoutX="201.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleGoToCancel" prefHeight="38.0" prefWidth="200.0" styleClass="btn-main" stylesheets="@styles.css" text="Cancel Reservation" />
+                  <Button fx:id="checkoutButton" mnemonicParsing="false" onAction="#handleCheckout" prefHeight="41.0" prefWidth="172.0" styleClass="btn-main" stylesheets="@styles.css" text="Check Out" />
                </children>
             </HBox>
          </children>

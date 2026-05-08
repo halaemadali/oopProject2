@@ -17,6 +17,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ReservationController implements Initializable {
     @FXML private DatePicker         checkinPicker;
     @FXML private DatePicker         checkoutPicker;
     @FXML private Label              statusLabel;
+    @FXML private Label guestTagLabel;
 
 
     private Guest      currentGuest;
@@ -45,6 +47,7 @@ public class ReservationController implements Initializable {
 
     public void setGuest(Guest g) {
         this.currentGuest = g;
+        if (guestTagLabel != null) guestTagLabel.setText(g.getUsername());
     }
 
 
@@ -93,5 +96,15 @@ public class ReservationController implements Initializable {
 
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.setScene(new Scene(root));
+    }
+    @FXML
+    private void handleBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/Resources/fxml/ManageReservationScreen.fxml"));
+        Parent root = loader.load();
+        GuestManageReservationController next = loader.getController();
+        next.setGuest(currentGuest);
+        ((Stage) statusLabel.getScene().getWindow())
+                .setScene(new Scene(root));
     }
 }
