@@ -143,22 +143,20 @@ public class CheckoutController implements Initializable {
             }
         }
 
-
-
-        double roomTotal = selectedReservation.getRoom().getPrice()
-                * selectedReservation.getDuration();
-
-
         double amenitiesTotal = 0;
         for (Amenity a : selectedReservation.getRequired_amenities()) {
             amenitiesTotal += a.getPrice();
         }
 
-        double totalDue = selectedReservation.getInvoice().calculateTotal()
-                + amenitiesTotal;
+
+        double roomCost = selectedReservation.getInvoice().calculateTotal() - amenitiesTotal ;
 
 
-        lblRoomTotal.setText(String.format("$ %.2f", roomTotal));
+
+        double totalDue = roomCost + amenitiesTotal;
+
+
+        lblRoomTotal.setText(String.format("$ %.2f", roomCost));
         lblAmenities.setText(String.format("$ %.2f", amenitiesTotal));
         lblTotalDue.setText(String.format("$ %.2f", totalDue));
 
@@ -200,8 +198,8 @@ public class CheckoutController implements Initializable {
             lblBalance.setText(String.format("$ %.2f", guest.getBalance()));
 
 
-           cmbRoomNumber.setValue(null);
-           selectedReservation = null;
+            cmbRoomNumber.setValue(null);
+            selectedReservation = null;
 
             refreshUI();
             statusLabel.setText("Checkout successful! Thank you \n Please proceed to the front desk");
@@ -218,7 +216,7 @@ public class CheckoutController implements Initializable {
     public void handleBack() throws Exception {
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/Resources/fxml/GuestDashboard.fxml.fxml")
+                getClass().getResource("/Resources/fxml/GuestDashboard.fxml")
         );
         Parent root = loader.load();
 
