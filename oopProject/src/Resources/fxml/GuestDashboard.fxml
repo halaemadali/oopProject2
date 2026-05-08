@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="620.0" prefWidth="860.0" style="-fx-background-color: #fff0f0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestDashboardController">
+<BorderPane prefHeight="620.0" prefWidth="860.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controllers.GuestDashboardController">
 
     <stylesheets>
         <URL value="@styles.css" />
@@ -20,12 +20,12 @@
 
     <!-- TOP HEADER -->
     <top>
-        <VBox alignment="CENTER" style="-fx-background-color: #2c2c2c;">
+        <VBox alignment="CENTER" style="-fx-background-color: #e06d67;">
             <padding><Insets bottom="20" left="30" right="30" top="20" /></padding>
 
             <HBox alignment="CENTER_LEFT" spacing="0">
                 <VBox spacing="4" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-text-fill: #ffd1c9; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 2px;" text="🏨  HMS Hotel" />
+                    <Label style="-fx-text-fill: #f6f2f1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 2px;" text="🏨  GRAND STAY" />
                     <Label fx:id="welcomeLabel" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome, Guest" />
                     <Label fx:id="memberSinceLabel" style="-fx-text-fill: #ffe0d9; -fx-font-size: 12px;" text="Guest Account" />
                 </VBox>
@@ -36,7 +36,7 @@
                         <Label fx:id="balanceLabel" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="0.00" />
                         <Label style="-fx-text-fill: #ffe0d9; -fx-font-size: 11px;" text="Balance" />
                     </HBox>
-                    <Button onAction="#handleLogout" styleClass="btn-secondary" text="← Logout" />
+                    <Button onAction="#handleLogout" styleClass="btn-logout" text="← Logout" />
                 </VBox>
             </HBox>
         </VBox>
@@ -44,13 +44,13 @@
 
     <!-- CENTER -->
     <center>
-        <HBox spacing="20" style="-fx-background-color: #fff0f0;">
+        <HBox spacing="20" styleClass="dashboard-bg">
             <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
 
             <!-- Profile Card -->
             <VBox prefWidth="240" spacing="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(192, 57, 43, 0.15), 12, 0, 0, 3);">
 
-                <VBox alignment="CENTER" spacing="6" style="-fx-background-color: #e06d67; -fx-background-radius: 10 10 0 0; -fx-padding: 20 16 20 16;">
+                <VBox alignment="CENTER" spacing="6" style="-fx-background-color: e79d81; -fx-background-radius: 10 10 0 0; -fx-padding: 20 16 20 16;">
                     <StackPane style="-fx-background-color: #ff6b5e; -fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60;">
                         <Label style="-fx-font-size: 26px; -fx-text-fill: white;" text="👤" />
                     </StackPane>
@@ -86,7 +86,7 @@
                 <Region VBox.vgrow="ALWAYS" />
 
                 <VBox style="-fx-padding: 16;">
-                    <Button maxWidth="Infinity" onAction="#handleMakeReservation" prefHeight="38" styleClass="btn-main" text="➕  Manage Reservations" />
+                    <Button maxWidth="Infinity" onAction="#handleMakeReservation" prefHeight="38" styleClass="btn-main" text="➕  Make Reservation" />
                 </VBox>
             </VBox>
 
@@ -153,9 +153,9 @@
 
     <!-- BOTTOM BAR -->
     <bottom>
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #ffe6e0; -fx-border-color: #e74c3c; -fx-border-width: 1 0 0 0; -fx-padding: 10 24 10 24;">
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-border-color: #e06d67; -fx-border-width: 1 0 0 0; -fx-padding: 10 24 10 24;" styleClass="dashboard-bg">
             <Label style="-fx-font-size: 12px;" text="🏨" />
-            <Label style="-fx-text-fill: #c0392b; -fx-font-size: 11px;" text="HMS Hotel Management System" />
+            <Label style="-fx-text-fill: #c0392b; -fx-font-size: 11px;" text="Grand Stay Hotel Management System" />
             <Region HBox.hgrow="ALWAYS" />
             <Label fx:id="statusLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;" text="" />
         </HBox>

@@ -56,6 +56,19 @@
     -fx-pref-height: 35px;
 }
 
+
+.btn-secondary2 {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-border-color: #e06d67;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8px;
+    -fx-cursor: hand;
+    -fx-pref-height: 35px;
+}
+
 .btn-secondary:hover {
     -fx-background-color: #e06d67;
     -fx-text-fill: white;
