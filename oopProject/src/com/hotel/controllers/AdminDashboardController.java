@@ -19,56 +19,46 @@ import java.util.ResourceBundle;
 
 public class AdminDashboardController implements Initializable {
 
-    // ── Header ──────────────────────────────────────────────────────────────
     @FXML private Label lblAdmin;
-
-    // ── Status ──────────────────────────────────────────────────────────────
     @FXML private Label statusLabel;
-
-    // ── Panels ──────────────────────────────────────────────────────────────
     @FXML private VBox panelAddRoom;
     @FXML private VBox panelAddRoomType;
     @FXML private VBox panelAddAmenity;
     @FXML private VBox panelAddReceptionist;
 
-    // ── Add Room fields ──────────────────────────────────────────────────────
     @FXML private TextField        roomNumberField;
     @FXML private TextField        roomFloorField;
     @FXML private ComboBox<RoomType> roomTypeCombo;
     @FXML private ComboBox<View>   roomViewCombo;
 
-    // ── Add Room Type fields ─────────────────────────────────────────────────
     @FXML private TextField rtCategoryField;
     @FXML private TextField rtCapacityField;
     @FXML private TextField rtPriceField;
 
-    // ── Add Amenity fields ───────────────────────────────────────────────────
+
     @FXML private TextField amenityNameField;
     @FXML private TextField amenityPriceField;
 
-    // ── Add Receptionist fields ──────────────────────────────────────────────
     @FXML private TextField     recepUsernameField;
     @FXML private PasswordField recepPasswordField;
     @FXML private DatePicker    recepDobPicker;
     @FXML private TextField     recepHoursField;
 
-    // ── State ────────────────────────────────────────────────────────────────
     private Admin currentAdmin;
 
-    // ════════════════════════════════════════════════════════════════════════
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         roomTypeCombo.getItems().addAll(HotelDatabase.roomTypes);
         roomViewCombo.getItems().addAll(View.values());
     }
 
-    /** Called by LoginController after a successful admin login. */
+
     public void setAdmin(Admin admin) {
         this.currentAdmin = admin;
         lblAdmin.setText(admin.getUsername());
     }
 
-    // ══════════════════════════ SIDEBAR — Panel switchers ════════════════════
 
     @FXML
     private void handleShowAddRoom() {
@@ -94,13 +84,12 @@ public class AdminDashboardController implements Initializable {
         clearStatus();
     }
 
-    // ══════════════════════════ FORM SUBMIT handlers ═════════════════════════
 
     @FXML
     private void handleAddRoom() {
         clearStatus();
 
-        // Validate inputs
+        //Validate inputs
         String roomNumText = roomNumberField.getText().trim();
         String floorText   = roomFloorField.getText().trim();
 
@@ -164,7 +153,6 @@ public class AdminDashboardController implements Initializable {
 
         try {
             currentAdmin.addRoomType(category, capacity, price);
-            // Refresh the combo so new type is immediately available in Add Room
             roomTypeCombo.getItems().setAll(HotelDatabase.roomTypes);
             showSuccess("Room type '" + category + "' added successfully.");
             rtCategoryField.clear();
@@ -184,7 +172,7 @@ public class AdminDashboardController implements Initializable {
         String priceText = amenityPriceField.getText().trim();
 
         if (name.isEmpty() || priceText.isEmpty()) {
-            showError("Please fill in all amenity fields.");
+            showError("Please fill in all fields.");
             return;
         }
 
@@ -242,7 +230,6 @@ public class AdminDashboardController implements Initializable {
         }
     }
 
-    // ══════════════════════════ LOGOUT ═══════════════════════════════════════
 
     @FXML
     private void handleLogout() {
@@ -258,9 +245,7 @@ public class AdminDashboardController implements Initializable {
         }
     }
 
-    // ══════════════════════════ HELPERS ══════════════════════════════════════
 
-    /** Show only the selected panel, hide all others. */
     private void showPanel(VBox target) {
         for (VBox panel : new VBox[]{panelAddRoom, panelAddRoomType, panelAddAmenity, panelAddReceptionist}) {
             boolean show = panel == target;
@@ -275,11 +260,11 @@ public class AdminDashboardController implements Initializable {
 
     private void showError(String msg) {
         statusLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 13px;");
-        statusLabel.setText("❌  " + msg);
+        statusLabel.setText( msg);
     }
 
     private void showSuccess(String msg) {
         statusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 13px;");
-        statusLabel.setText("✅  " + msg);
+        statusLabel.setText( msg);
     }
 }

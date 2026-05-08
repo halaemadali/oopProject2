@@ -106,12 +106,13 @@ public class StaffLoginController implements Initializable {
             Parent root = loader.load();
 
 
-            //AdminDashboardController ctrl = loader.getController();
-            //ctrl.setAdmin(admin);
+            AdminDashboardController ctrl = loader.getController();
+            ctrl.setAdmin(admin);
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Admin Dashboard");
+
 
         } catch (Exception e) {
 

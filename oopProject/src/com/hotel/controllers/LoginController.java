@@ -1,9 +1,6 @@
 package com.hotel.controllers;
 
-import com.hotel.database.HotelDatabase;
-import com.hotel.models.Admin;
 import com.hotel.models.Guest;
-import com.hotel.models.Receptionist;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,7 +32,6 @@ public class LoginController implements Initializable {
     private void handleLogin() {
         String username = loginUsernameField.getText().trim();
 
-        // Get password from whichever field is visible
         String password = loginPasswordField.isVisible()
                 ? loginPasswordField.getText().trim()
                 : loginPasswordVisible.getText().trim();
@@ -45,28 +41,10 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // Check Guests
         Guest guest = Guest.login(username, password);
         if (guest != null) {
             goToGuestDashboard(guest);
             return;
-        }
-
-        // Check Admins
-        for (Admin a : HotelDatabase.admins) {
-            if (a.getUsername().equals(username) && a.getPassword().equals(password)) {
-                showSuccess("Welcome Admin: " + username);
-                // TODO: goToAdminDashboard(a);
-                return;
-            }
-        }
-
-        // Check Receptionists
-        for (Receptionist r : HotelDatabase.receptionists) {
-            if (r.getUsername().equals(username) && r.getPassword().equals(password)) {
-                goToReceptionistDashboard(r);
-                return;
-            }
         }
 
         showError("Invalid username or password.");
@@ -122,25 +100,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    private void goToReceptionistDashboard(Receptionist receptionist) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/Resources/fxml/ReceptionistDashboard.fxml")
-            );
-            Parent root = loader.load();
-
-            ReceptionistDashboardController ctrl = loader.getController();
-            ctrl.setReceptionist(receptionist);
-
-            Stage stage = (Stage) loginUsernameField.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Receptionist Dashboard");
-
-        } catch (Exception e) {
-            showError("Navigation error: " + e.getMessage());
-        }
-    }
-
     private void showError(String message) {
         loginStatusLabel.setStyle("-fx-text-fill: #e76c3c; -fx-font-size: 13px;");
         loginStatusLabel.setText(message);
@@ -149,5 +108,18 @@ public class LoginController implements Initializable {
     private void showSuccess(String message) {
         loginStatusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 13px;");
         loginStatusLabel.setText(message);
+    }
+    @FXML
+    private void handleBack() {
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/Resources/fxml/WelcomeScreen.fxml")
+            );
+            Stage stage = (Stage) loginUsernameField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Hotel – Welcome");
+        } catch (Exception e) {
+            showError("Navigation error: " + e.getMessage());
+        }
     }
 }
