@@ -18,11 +18,20 @@ public class Amenity {
 
 
     public void setName(String name) {
-        if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Amenity name cannot be null or empty");
 
-        this.name = name;
-    }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Amenity name cannot be null or empty");
+        }
+        for (Amenity a : HotelDatabase.amenities) {
+            
+            if (a != this &&
+                    a.getName().equalsIgnoreCase(name)) {
+
+                throw new IllegalArgumentException(
+                        "Amenity name already exists");
+            }
+        }
 
     public void setPrice(double price) {
         if (price < 0) {
