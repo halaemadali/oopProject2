@@ -235,11 +235,11 @@ public class AdminDashboardController implements Initializable {
     private void handleLogout() {
         try {
             Parent root = FXMLLoader.load(
-                    getClass().getResource("/Resources/fxml/LoginScreen.fxml")
+                    getClass().getResource("/Resources/fxml/WelcomeScreen.fxml")
             );
             Stage stage = (Stage) statusLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Hotel Login");
+            stage.setTitle("HMS Hotel- Welcome");
         } catch (Exception e) {
             showError("Logout error: " + e.getMessage());
         }

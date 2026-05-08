@@ -2,6 +2,7 @@ package com.hotel.controllers;
 
 import com.hotel.database.HotelDatabase;
 import com.hotel.enums.PaymentMethod;
+import com.hotel.enums.ReservationStatus;
 import com.hotel.models.Guest;
 import com.hotel.models.Receptionist;
 import com.hotel.models.Reservation;
@@ -27,27 +28,23 @@ import java.util.ResourceBundle;
 
 public class ReceptionistDashboardController implements Initializable {
 
-    // ── Header ──────────────────────────────────────────────────────────────
     @FXML private Label lblReceptionist;
 
-    // ── Input fields ────────────────────────────────────────────────────────
-    @FXML private TextField         reservationIdField;
-    @FXML private TextField         guestUsernameField;
-    @FXML private TextField         roomNumberField;
-    @FXML private ComboBox<String>  paymentCombo;
+    @FXML private TextField reservationIdField;
+    @FXML private TextField guestUsernameField;
+    @FXML private TextField roomNumberField;
+    @FXML private ComboBox<String> paymentCombo;
 
-    // ── Status label ────────────────────────────────────────────────────────
     @FXML private Label statusLabel;
 
-    // ── Reservations Table ──────────────────────────────────────────────────
-    @FXML private TableView<Reservation>              reservationsTable;
-    @FXML private TableColumn<Reservation, Integer>   colID;
-    @FXML private TableColumn<Reservation, String>    colGuest;
-    @FXML private TableColumn<Reservation, Integer>   colRoom;
-    @FXML private TableColumn<Reservation, String>    colCheckin;
-    @FXML private TableColumn<Reservation, String>    colCheckout;
-    @FXML private TableColumn<Reservation, String>    colStatus;
-    @FXML private TableColumn<Reservation, Double>    colTotal;
+    @FXML private TableView<Reservation> reservationsTable;
+    @FXML private TableColumn<Reservation, Integer> colID;
+    @FXML private TableColumn<Reservation, String> colGuest;
+    @FXML private TableColumn<Reservation, Integer> colRoom;
+    @FXML private TableColumn<Reservation, String> colCheckin;
+    @FXML private TableColumn<Reservation, String> colCheckout;
+    @FXML private TableColumn<Reservation, String> colStatus;
+    @FXML private TableColumn<Reservation, Double> colTotal;
 
     private Receptionist currentReceptionist;
 
@@ -68,14 +65,13 @@ public class ReceptionistDashboardController implements Initializable {
             Room r = c.getValue().getRoom();
             return new SimpleIntegerProperty(r != null ? r.getRoomNumber() : 0).asObject();
         });
-        colCheckin.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getCheckin() != null ? c.getValue().getCheckin().toString() : "—"));
-        colCheckout.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getCheckout() != null ? c.getValue().getCheckout().toString() : "—"));
-        colStatus.setCellValueFactory(c ->
-                new SimpleStringProperty(c.getValue().getStatus().name()));
-        colTotal.setCellValueFactory(c ->
-                new SimpleDoubleProperty(c.getValue().getInvoice() != null ? c.getValue().getInvoice().calculateTotal() : 0).asObject());
+        colCheckin.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCheckin() != null ?
+                c.getValue().getCheckin().toString() : "—"));
+        colCheckout.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getCheckout() != null ?
+                c.getValue().getCheckout().toString() : "—"));
+        colStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus().name()));
+        colTotal.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getInvoice() != null ?
+                c.getValue().getInvoice().calculateTotal() : 0).asObject());
     }
 
     public void setReceptionist(Receptionist r) {
@@ -84,7 +80,7 @@ public class ReceptionistDashboardController implements Initializable {
         loadAllReservations();
     }
 
-    // ════════════════════════════════════════════════ SIDEBAR ACTIONS ═══════
+    // ==================== BUTTON ACTIONS ====================
 
     @FXML private void handleViewAll() {
         clearStatus();
@@ -96,9 +92,7 @@ public class ReceptionistDashboardController implements Initializable {
         clearStatus();
         ObservableList<Reservation> pending = FXCollections.observableArrayList();
         for (Reservation r : HotelDatabase.reservations) {
-            if ("PENDING".equals(r.getStatus().name())) {
-                pending.add(r);
-            }
+            if ("PENDING".equals(r.getStatus().name())) pending.add(r);
         }
         reservationsTable.setItems(pending);
         showInfo("Showing " + pending.size() + " PENDING reservation(s).");
@@ -125,73 +119,136 @@ public class ReceptionistDashboardController implements Initializable {
     @FXML private void handleCheckIn() {
         clearStatus();
         String username = guestUsernameField.getText().trim();
-        int id = parseReservationId();
-        if (id < 0) return;
-        if (username.isEmpty()) {
-            showError("Please enter the guest username.");
+        int roomNum = parseRoomNumber();
+        int resId = parseReservationId();
+
+        if (roomNum < 0 || resId < 0 || username.isEmpty()) {
+            showError("Please fill all required fields.");
             return;
         }
-        currentReceptionist.checkIn(username, id);
+
+        Room room = findRoomByNumber(roomNum);
+        if (room == null) {
+            showError("Room " + roomNum + " not found!");
+            return;
+        }
+
+        if (!room.getisavailable()) {
+            showError("Room " + roomNum + " is not available!");
+            return;
+        }
+
+        currentReceptionist.checkIn(username, resId);
         loadAllReservations();
-        showSuccess("Check-in processed for guest: " + username);
+        showSuccess("Check-in successful for room " + roomNum);
     }
 
     @FXML private void handleCheckout() {
         clearStatus();
         String username = guestUsernameField.getText().trim();
         int roomNum = parseRoomNumber();
-        if (roomNum < 0) return;
-        if (username.isEmpty()) {
-            showError("Please enter the guest username.");
+
+        if (roomNum < 0 || username.isEmpty()) {
+            showError("Please fill all required fields.");
             return;
         }
         if (paymentCombo.getValue() == null) {
             showError("Please select a payment method.");
             return;
         }
+
+        Room room = findRoomByNumber(roomNum);
+        if (room == null) {
+            showError("Room " + roomNum + " not found!");
+            return;
+        }
+
+        if (room.getisavailable()) {
+            showError("Room " + roomNum + " is not checked in yet!");
+            return;
+        }
+
         PaymentMethod method = PaymentMethod.valueOf(paymentCombo.getValue());
         currentReceptionist.processGuestCheckout(username, roomNum, method);
         loadAllReservations();
-        showSuccess("Checkout processed for room " + roomNum + ".");
+        showSuccess("Checkout processed successfully for room " + roomNum);
+    }
+
+    @FXML
+    private void handleCompleteReservation() {
+        clearStatus();
+
+        int id = parseReservationId();
+        if (id < 0) return;
+
+        // Find the reservation
+        Reservation target = null;
+        for (Reservation r : HotelDatabase.reservations) {
+            if (r.getID() == id) {
+                target = r;
+                break;
+            }
+        }
+
+        // Validation
+        if (target == null) {
+            showError("Reservation #" + id + " not found.");
+            return;
+        }
+
+        if (target.getStatus() != ReservationStatus.CHECKED_OUT) {
+            showError("Cannot complete! Reservation #" + id + " is not CHECKED_OUT. Current status: " + target.getStatus());
+            return;
+        }
+
+        // Complete it
+        currentReceptionist.completeReservation(id);
+        loadAllReservations();
+        showSuccess("Reservation #" + id + " completed! Room is now AVAILABLE.");
     }
 
     @FXML private void handleViewGuests() {
         clearStatus();
         showGuestsInNewWindow();
-        showInfo("Opened All Guests window (" + HotelDatabase.guests.size() + " guests)");
+        showInfo("Opened All Guests window");
     }
 
     @FXML private void handleViewRooms() {
         clearStatus();
         showRoomsInNewWindow();
-        showInfo("Opened All Rooms window (" + HotelDatabase.rooms.size() + " rooms)");
+        showInfo("Opened All Rooms window");
     }
 
     @FXML private void handleLogout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/Resources/fxml/LoginScreen.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/Resources/fxml/WelcomeScreen.fxml"));
             Stage stage = (Stage) statusLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Hotel Login");
+            stage.setTitle("HMS Hotel- Welcome");
         } catch (Exception e) {
             showError("Logout error: " + e.getMessage());
         }
     }
 
-    // ════════════════════════════════════════════════════ HELPERS ═══════════
+    // ==================== HELPERS ====================
+
+    private Room findRoomByNumber(int roomNumber) {
+        for (Room r : HotelDatabase.rooms) {
+            if (r.getRoomNumber() == roomNumber) return r;
+        }
+        return null;
+    }
 
     private void loadAllReservations() {
-        ObservableList<Reservation> all = FXCollections.observableArrayList(HotelDatabase.reservations);
-        reservationsTable.setItems(all);
+        reservationsTable.setItems(FXCollections.observableArrayList(HotelDatabase.reservations));
     }
 
     private int parseReservationId() {
         try {
             int id = Integer.parseInt(reservationIdField.getText().trim());
-            if (id <= 0) throw new NumberFormatException();
-            return id;
+            return (id > 0) ? id : -1;
         } catch (Exception e) {
-            showError("Please enter a valid Reservation ID.");
+            showError("Invalid Reservation ID");
             return -1;
         }
     }
@@ -199,18 +256,65 @@ public class ReceptionistDashboardController implements Initializable {
     private int parseRoomNumber() {
         try {
             int num = Integer.parseInt(roomNumberField.getText().trim());
-            if (num <= 0) throw new NumberFormatException();
-            return num;
+            return (num > 0) ? num : -1;
         } catch (Exception e) {
-            showError("Please enter a valid Room Number.");
+            showError("Invalid Room Number");
             return -1;
         }
     }
 
-    // ── Popup: All Rooms ────────────────────────────────────────────────────
+    // ==================== POPUP WINDOWS ====================
+
+    private void showGuestsInNewWindow() {
+        TableView<Guest> table = new TableView<>();
+        table.setPrefSize(1100, 650);
+
+        TableColumn<Guest, String> colUser = new TableColumn<>("Username");
+        colUser.setCellValueFactory(new PropertyValueFactory<>("username"));
+
+        TableColumn<Guest, String> colAddress = new TableColumn<>("Address");
+        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+        TableColumn<Guest, String> colGender = new TableColumn<>("Gender");
+        colGender.setCellValueFactory(c -> {
+            Guest g = c.getValue();
+            return new SimpleStringProperty(g != null && g.getGender() != null ?
+                    g.getGender().toString() : "—");
+        });
+
+        TableColumn<Guest, String> colDob = new TableColumn<>("Date of Birth");
+        colDob.setCellValueFactory(c -> {
+            Guest g = c.getValue();
+            return new SimpleStringProperty(g != null && g.getDateOfBirth() != null ?
+                    g.getDateOfBirth().toString() : "—");
+        });
+
+        TableColumn<Guest, Double> colBalance = new TableColumn<>("Balance");
+        colBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
+
+        TableColumn<Guest, Integer> colReservations = new TableColumn<>("Reservations");
+        colReservations.setCellValueFactory(c -> {
+            Guest g = c.getValue();
+            int count = (g != null && g.getReservations() != null) ? g.getReservations().size() : 0;
+            return new SimpleIntegerProperty(count).asObject();
+        });
+
+        table.getColumns().addAll(colUser, colAddress, colGender, colDob, colBalance, colReservations);
+        table.setItems(FXCollections.observableArrayList(HotelDatabase.guests));
+
+        VBox vbox = new VBox(10, new Label("All Guests - Total: " + HotelDatabase.guests.size()), table);
+        vbox.setStyle("-fx-padding: 15;");
+
+        Stage stage = new Stage();
+        stage.setTitle("All Guests");
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(new Scene(vbox));
+        stage.show();
+    }
+
     private void showRoomsInNewWindow() {
         TableView<Room> table = new TableView<>();
-        table.setPrefSize(800, 550);
+        table.setPrefSize(850, 550);
 
         TableColumn<Room, Integer> colNum = new TableColumn<>("Room No");
         colNum.setCellValueFactory(new PropertyValueFactory<>("roomNumber"));
@@ -218,28 +322,11 @@ public class ReceptionistDashboardController implements Initializable {
         TableColumn<Room, String> colType = new TableColumn<>("Type");
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
 
-        // Status column - robust version
         TableColumn<Room, String> colStatus = new TableColumn<>("Status");
         colStatus.setCellValueFactory(c -> {
-            Room room = c.getValue();
-            if (room == null) return new SimpleStringProperty("—");
-
-            try {
-                // Try common status getter names
-                Object statusObj = null;
-                if (hasMethod(room, "getStatus")) {
-                    statusObj = room.getClass().getMethod("getStatus").invoke(room);
-                } else if (hasMethod(room, "getRoomStatus")) {
-                    statusObj = room.getClass().getMethod("getRoomStatus").invoke(room);
-                } else if (hasMethod(room, "getState")) {
-                    statusObj = room.getClass().getMethod("getState").invoke(room);
-                }
-
-                String status = (statusObj != null) ? statusObj.toString() : "UNKNOWN";
-                return new SimpleStringProperty(status);
-            } catch (Exception e) {
-                return new SimpleStringProperty("ERROR");
-            }
+            Room r = c.getValue();
+            if (r == null) return new SimpleStringProperty("—");
+            return new SimpleStringProperty(r.getisavailable() ? "AVAILABLE" : "OCCUPIED");
         });
 
         TableColumn<Room, Double> colPrice = new TableColumn<>("Price");
@@ -258,62 +345,24 @@ public class ReceptionistDashboardController implements Initializable {
         stage.show();
     }
 
-    // ── Popup: All Guests ───────────────────────────────────────────────────
-    private void showGuestsInNewWindow() {
-        TableView<Guest> table = new TableView<>();
-        table.setPrefSize(800, 500);
-
-        TableColumn<Guest, String> colUser = new TableColumn<>("Username");
-        colUser.setCellValueFactory(new PropertyValueFactory<>("username"));
-
-        TableColumn<Guest, String> colName = new TableColumn<>("Full Name");
-        colName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
-
-        TableColumn<Guest, String> colEmail = new TableColumn<>("Email");
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-
-        TableColumn<Guest, String> colPhone = new TableColumn<>("Phone");
-        colPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-
-        table.getColumns().addAll(colUser, colName, colEmail, colPhone);
-        table.setItems(FXCollections.observableArrayList(HotelDatabase.guests));
-
-        VBox vbox = new VBox(10, new Label("All Guests - Total: " + HotelDatabase.guests.size()), table);
-        vbox.setStyle("-fx-padding: 15;");
-
-        Stage stage = new Stage();
-        stage.setTitle("All Guests");
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(new Scene(vbox));
-        stage.show();
-    }
-
-    // Helper method to check if a method exists
-    private boolean hasMethod(Object obj, String methodName) {
-        try {
-            obj.getClass().getMethod(methodName);
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-    }
+    // ==================== STATUS HELPERS ====================
 
     private void clearStatus() {
         statusLabel.setText("");
     }
 
     private void showError(String msg) {
-        statusLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 13px;");
-        statusLabel.setText("❌  " + msg);
+        statusLabel.setStyle("-fx-text-fill: #e74c3c;");
+        statusLabel.setText("❌ " + msg);
     }
 
     private void showSuccess(String msg) {
-        statusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 13px;");
-        statusLabel.setText("✅  " + msg);
+        statusLabel.setStyle("-fx-text-fill: #27ae60;");
+        statusLabel.setText("✅ " + msg);
     }
 
     private void showInfo(String msg) {
-        statusLabel.setStyle("-fx-text-fill: #2980b9; -fx-font-size: 13px;");
-        statusLabel.setText("ℹ️  " + msg);
+        statusLabel.setStyle("-fx-text-fill: #2980b9;");
+        statusLabel.setText("ℹ️ " + msg);
     }
 }

@@ -72,10 +72,10 @@ public class GuestDashboardController {
     @FXML
     private void handleLogout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/Resources/fxml/LoginScreen.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/Resources/fxml/WelcomeScreen.fxml"));
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Hotel Login");
+            stage.setTitle("HMS Hotel- Welcome");
         } catch (Exception e) {
             System.out.println("Logout error: " + e.getMessage());
         }

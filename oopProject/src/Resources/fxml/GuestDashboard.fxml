@@ -25,7 +25,7 @@
 
             <HBox alignment="CENTER_LEFT" spacing="0">
                 <VBox spacing="4" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-text-fill: #f6f2f1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 2px;" text="🏨  GRAND STAY" />
+                    <Label style="-fx-text-fill: #f6f2f1; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 2px;" text="🏨 HMS HOTEL" />
                     <Label fx:id="welcomeLabel" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome, Guest" />
                     <Label fx:id="memberSinceLabel" style="-fx-text-fill: #ffe0d9; -fx-font-size: 12px;" text="Guest Account" />
                 </VBox>
@@ -36,7 +36,7 @@
                         <Label fx:id="balanceLabel" style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;" text="0.00" />
                         <Label style="-fx-text-fill: #ffe0d9; -fx-font-size: 11px;" text="Balance" />
                     </HBox>
-                    <Button onAction="#handleLogout" styleClass="btn-logout" text="← Logout" />
+                    <Button onAction="#handleLogout" styleClass="btn-main" stylesheets="@styles.css" text="← Logout" />
                 </VBox>
             </HBox>
         </VBox>
@@ -86,7 +86,7 @@
                 <Region VBox.vgrow="ALWAYS" />
 
                 <VBox style="-fx-padding: 16;">
-                    <Button maxWidth="Infinity" onAction="#handleMakeReservation" prefHeight="38" styleClass="btn-main" text="➕  Make Reservation" />
+                    <Button maxWidth="Infinity" onAction="#handleMakeReservation" prefHeight="38" styleClass="btn-main" text="➕  Manage Reservations" />
                 </VBox>
             </VBox>
 
@@ -155,7 +155,7 @@
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-border-color: #e06d67; -fx-border-width: 1 0 0 0; -fx-padding: 10 24 10 24;" styleClass="dashboard-bg">
             <Label style="-fx-font-size: 12px;" text="🏨" />
-            <Label style="-fx-text-fill: #c0392b; -fx-font-size: 11px;" text="Grand Stay Hotel Management System" />
+            <Label style="-fx-text-fill: #c0392b; -fx-font-size: 11px;" text="HMS Hotel Management System" />
             <Region HBox.hgrow="ALWAYS" />
             <Label fx:id="statusLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px;" text="" />
         </HBox>
