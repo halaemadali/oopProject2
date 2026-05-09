@@ -10,7 +10,7 @@
 
 ## Project Overview
 
-A desktop Hotel Reservation System built in Java using JavaFX and SQLite, applying core Object-Oriented Programming principles and software design concepts.
+A desktop Hotel Reservation System built in Java using JavaFX, applying core Object-Oriented Programming principles and software design concepts.
 
 - **Milestone 1** focused on the complete backend implementation and OOP architecture.
 - **Milestone 2** introduced the graphical user interface (GUI), database integration using full system interaction through JavaFX.
